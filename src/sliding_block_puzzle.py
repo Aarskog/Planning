@@ -18,12 +18,12 @@ class board:
         if parent_board is None:
             #First board; intitialize with a random board
             self.board = np.array(np.reshape(random.sample(range(self.boardsize**2), self.boardsize**2),(-1,self.boardsize)))
-            self.board = np.array([[1,2,5],[4,6,8],[3,7,0]])
+            #self.board = np.array([[1,2,5],[4,6,8],[3,7,0]])
             self.h = self.h_manhattan_distance()
 
         else:
             self.board =  copy.deepcopy(parent_board.board)
-            self.get_new_board(action,parent_board)
+            self.do_action(action)
             self.h = copy.deepcopy(parent_board.h) + self.h_manhattan_distance()
 
     def is_solved(self):
@@ -47,20 +47,20 @@ class board:
             self.pos_actions.append(board(parent_board=self,action='right'))
         return self.pos_actions
 
-    def get_new_board(self,action,parent_board):
+    def do_action(self,action):
         zero_position = np.argwhere(self.board==0)[0]
         if action=='up':
             #Swap
-            self.board[zero_position[0]][zero_position[1]],self.board[zero_position[0]-1][zero_position[1]] = parent_board.board[zero_position[0]-1][zero_position[1]],parent_board.board[zero_position[0]][zero_position[1]]
+            self.board[zero_position[0]][zero_position[1]],self.board[zero_position[0]-1][zero_position[1]] = self.board[zero_position[0]-1][zero_position[1]],self.board[zero_position[0]][zero_position[1]]
 
         elif action=='down':
-            self.board[zero_position[0]][zero_position[1]],self.board[zero_position[0]+1][zero_position[1]] = parent_board.board[zero_position[0]+1][zero_position[1]],parent_board.board[zero_position[0]][zero_position[1]]
+            self.board[zero_position[0]][zero_position[1]],self.board[zero_position[0]+1][zero_position[1]] = self.board[zero_position[0]+1][zero_position[1]],self.board[zero_position[0]][zero_position[1]]
 
         elif action == 'left':
-            self.board[zero_position[0]][zero_position[1]],self.board[zero_position[0]][zero_position[1]-1] = parent_board.board[zero_position[0]][zero_position[1]-1],parent_board.board[zero_position[0]][zero_position[1]]
+            self.board[zero_position[0]][zero_position[1]],self.board[zero_position[0]][zero_position[1]-1] = self.board[zero_position[0]][zero_position[1]-1],self.board[zero_position[0]][zero_position[1]]
 
         elif action == 'right':
-            self.board[zero_position[0]][zero_position[1]],self.board[zero_position[0]][zero_position[1]+1] = parent_board.board[zero_position[0]][zero_position[1]+1],parent_board.board[zero_position[0]][zero_position[1]]
+            self.board[zero_position[0]][zero_position[1]],self.board[zero_position[0]][zero_position[1]+1] = self.board[zero_position[0]][zero_position[1]+1],self.board[zero_position[0]][zero_position[1]]
 
     def h_misplaced_tiles(self):
         #heuristic function of number of misplaces tiles
@@ -76,6 +76,14 @@ class board:
 
             h = h + abs(ex - sx) + abs(ey - sy)
         return h
+
+    def execute_path(self,path):
+        #print self.board
+        for action in path:
+            print '---------------'
+            self.do_action(action)
+            print action
+            print self.board
 
 # class Node:
 #     def __init__(self, h,h_board):
@@ -103,7 +111,7 @@ def in_order_print(root):
     if not root:
         return
     in_order_print(root.l_child)
-    print root.data
+    #print root.data
     in_order_print(root.r_child)
 
 def in_order_get(root):
@@ -132,23 +140,16 @@ def get_path(board_node,path):
         return board_node.action
     get_path(board_node.parent_board,path)
     #print board_node.action
-    path.append(1)
+    path.append(board_node.action)
+    #print path
 
-
-def bfs_solve():
+def solve(init_board):
 
     visited = []
     #path = []
 
-    init_board = board()
+    #init_board = board()
     q = [init_board]
-
-    #create a binary tree
-    #h = init_board.h_misplaced_tiles()
-    #root = Node(init_board.h,init_board)
-
-    print init_board.board
-    print init_board.h
 
     i = 0
     possible_solution = init_board
@@ -158,11 +159,12 @@ def bfs_solve():
 
 
         if possible_solution.is_solved():
-            print possible_solution.board
-            print_path(possible_solution)
+            #print possible_solution.board
+            #print_path(possible_solution)
             path = []
-            print get_path(possible_solution,path)
-            return 'solved',i
+            get_path(possible_solution,path)
+            #print path
+            return path
 
 
         else:
@@ -205,25 +207,13 @@ def bfs_solve():
     print
 
 def main():
-    # board1 = board()
-    # print board1.board
-    # print board1.h
-    #solution = np.array([[0,1,2],[3,4,5],[6,7,8]])
-    #print solution
-    # print board1.board
-    # print (solution==solution)
 
-    # pos_ac = board1.possible_actions()
-    # print board1.board
-    # for board_item in pos_ac:
-    #     print board_item.board
-    #board2 = board(parent_board=board1,action='left')
-    #boards.print_board()
-    #boards.possible_actions()
-
-    print bfs_solve()
-
-    #print bfs_solve()
+    board_to_solve = board()
+    print 'h=',board_to_solve.h
+    print board_to_solve.board
+    path = solve(board_to_solve)
+    print path
+    board_to_solve.execute_path(path)
 
 
 if __name__ == "__main__":
