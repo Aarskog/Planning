@@ -19,10 +19,22 @@ class board:
 
         if parent_board is None:
             #First board; intitialize with a random board
+
             self.board = np.array(np.reshape(random.sample(range(self.boardsize**2), self.boardsize**2),(-1,self.boardsize)))
+            # self.board = np.array([[8,6,7],[2,5,4],[3,0,1]])
+            # print self.is_solvable()
+            while not self.is_solvable():
+               self.board = np.array(np.reshape(random.sample(range(self.boardsize**2), self.boardsize**2),(-1,self.boardsize)))
+
+
+            #Test boards
             #self.board = np.array([[1,2,5],[4,6,8],[3,7,0]])
             #self.board = np.array([[0,2,5],[1,6,3],[7,8,4]])
             #self.board = np.array([[2,0,1],[4,7,8],[6,3,5]])
+
+            #hardest board
+            #self.board = np.array([[8,6,7],[2,5,4],[3,0,1]])
+
             self.h = self.h_manhattan_distance()
             self.depth = 0
 
@@ -37,8 +49,31 @@ class board:
     def is_solved(self):
         return (self.board == self.solution).all()
 
-        #creates child nodes
+    def is_solvable(self):
 
+        #https://www.cs.bham.ac.uk/~mdr/teaching/modules04/java2/TilesSolvability.html
+
+        #Get the board on a single line
+        single_line = copy.deepcopy(self.board).ravel()
+        inversions = 0
+        inversions2 = 0
+        for i in range(0, self.boardsize**2 - 1):
+            for j in range(i+1, self.boardsize**2 ):
+                if (single_line[i] > single_line[j]):
+                    inversions = inversions + 1
+
+        for i in range(1,self.boardsize**2):
+            pos = np.argwhere(single_line==i)[0][0]
+            inversions2 = inversions2 + abs(i-pos)
+
+        if (inversions%2 == 0 and inversions2%2==0) or inversions==inversions2:
+            print 'solvable',inversions,inversions2
+            print 1
+            return True
+        print '0',inversions,inversions2
+        return False
+
+    #creates child nodes
     def possible_actions(self):
         zero_position = np.argwhere(self.board==0)[0]
         self.pos_actions = []
@@ -126,6 +161,7 @@ def solve2(init_board):
             #print possible_solution.board
             #print_path(possible_solution)
             print 'Solved'
+            print 'Nodes visited = ',i
             path = []
             get_path(possible_solution,path)
             #print path
@@ -183,13 +219,17 @@ def solve2(init_board):
 
 
     print '---NOT SOLVABLE---'
+    print 'Nodes visited = ',i
     return []
 
 
 def main():
 
     board_to_solve = board()
-    print 'h=',board_to_solve.h
+
+
+    print 'h manh=',board_to_solve.h
+    print 'h misplaced=',board_to_solve.h_misplaced_tiles()
     print board_to_solve.board
     path = solve2(board_to_solve)
     print 'length of path = ',len(path)
@@ -199,112 +239,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
-def solve(init_board):
-
-    visited = []
-    #path = []
-
-    #init_board = board()
-    q = [init_board]
-
-    i = 0
-    possible_solution = init_board
-    while q:
-        #possible_solution = get_next_node(root)
-        #print possible_solution.board
-
-
-        if possible_solution.is_solved():
-            #print possible_solution.board
-            #print_path(possible_solution)
-            path = []
-            get_path(possible_solution,path)
-            #print path
-            return path
-
-
-        else:
-
-            new_nodes = possible_solution.possible_actions()
-            for new_node in new_nodes:
-                is_visited = False
-                for visited_node in visited:
-                    if (new_node.board==visited_node).all():
-                        is_visited = True
-                        break
-                if not is_visited:
-                    #binary_insert(root,Node(new_node.h,new_node))
-                    q.insert(0,new_node)
-
-            possible_solution = q[0]
-            j=0
-            posit = 0
-            for node in q:
-                if node.h<possible_solution.h:
-                    posit = j
-                    possible_solution = node
-                j=j+1
-
-            del q[posit]
-
-
-        visited.append(possible_solution.board)
-
-        # print 'Visited: ',len(q)
-        print '{0}\r'.format(i),
-
-        # print "--------------debug------------"
-        # print 'i=',i
-        # print possible_solution.board
-        # print 'h=', possible_solution.h
-        # print "-------------------------------"
-        i = i + 1
-
-    print
-
-
-class Node:
-    def __init__(self, h,h_board):
-        self.l_child = None
-        self.r_child = None
-        self.data = h
-        self.h_board = h_board
-
-def binary_insert(root, node):
-    if root is None:
-        root = node
-    else:
-        if root.data > node.data:
-            if root.l_child is None:
-                root.l_child = node
-            else:
-                binary_insert(root.l_child, node)
-        else:
-            if root.r_child is None:
-                root.r_child = node
-            else:
-                binary_insert(root.r_child, node)
-
-def in_order_print(root):
-    if not root:
-        return
-    in_order_print(root.l_child)
-    #print root.data
-    in_order_print(root.r_child)
-
-def in_order_get(root):
-    if not root.l_child or not root.l_child.h_board.visited:
-        return root.h_board
-    return in_order_get(root.l_child)
-    #return root.h_board
-    #in_order_get(root.r_child)
-
-def get_next_node(root):
-    if not root.l_child:
-        return root.h_board
-    if root.l_child:
-        return get_next_node(root.l_child)
-    else:
-        return get_next_node(root.r_child)
