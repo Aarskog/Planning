@@ -2,13 +2,16 @@ import numpy as np
 import copy
 import random
 import time
-import collections
+
+import matplotlib.pyplot as plt
+import matplotlib.animation as animation
 
 class board:
     board = []
     boardsize = 3
     pos_actions = []
-
+    num_tries = 0
+    num_false = 0
 
     def __init__(self,parent_board = None,action=None):
         #self.boardsize = 3
@@ -50,7 +53,7 @@ class board:
         return (self.board == self.solution).all()
 
     def is_solvable(self):
-
+        self.num_tries = self.num_tries + 1
         #https://www.cs.bham.ac.uk/~mdr/teaching/modules04/java2/TilesSolvability.html
 
         #Get the board on a single line
@@ -66,11 +69,11 @@ class board:
             pos = np.argwhere(single_line==i)[0][0]
             inversions2 = inversions2 + abs(i-pos)
 
-        if (inversions%2 == 0 and inversions2%2==0) or inversions==inversions2:
-            print 'solvable',inversions,inversions2
-            print 1
+            #if both are even or odd
+        if (abs(inversions2-inversions)%2==0):
             return True
-        print '0',inversions,inversions2
+        self.num_false = self.num_false + 1
+
         return False
 
     #creates child nodes
@@ -160,8 +163,8 @@ def solve2(init_board):
         if possible_solution.is_solved():
             #print possible_solution.board
             #print_path(possible_solution)
-            print 'Solved'
-            print 'Nodes visited = ',i
+            # print 'Solved'
+            # print 'Nodes visited = ',i
             path = []
             get_path(possible_solution,path)
             #print path
@@ -206,7 +209,7 @@ def solve2(init_board):
 
         if possible_solution.depth > maxdepth:
             maxdepth = possible_solution.depth
-            print maxdepth
+            # print 'depth= ',maxdepth
         #print possible_solution.depth
 
         # print "--------------debug------------"
@@ -224,18 +227,60 @@ def solve2(init_board):
 
 
 def main():
+    lenghts = []
+    plt.ion()
+    fig = plt.figure()
+    #ax = fig.add_subplot(111)
 
-    board_to_solve = board()
+    #plt.show(block=False)
 
+    bins = np.arange(0, 35, 1) # fixed bin size
 
-    print 'h manh=',board_to_solve.h
-    print 'h misplaced=',board_to_solve.h_misplaced_tiles()
-    print board_to_solve.board
-    path = solve2(board_to_solve)
-    print 'length of path = ',len(path)
-    print path
+    i = 0
+    atempts = 0
+    falses = 0
+    while 1:
+        board_to_solve = board()
+        #print board_to_solve.num_false
+        atempts = atempts + board_to_solve.num_tries
+        falses = falses + board_to_solve.num_false
+
+        # print 'h manh=',board_to_solve.h
+        # print 'h misplaced=',board_to_solve.h_misplaced_tiles()
+        # print board_to_solve.board
+        path = solve2(board_to_solve)
+        length = len(path)
+        lenghts.append(length)
+        plt.hist(lenghts, bins=bins, alpha=0.5)
+        #plt.clf()
+        fig.canvas.draw()
+        #plt.show(block=False)
+        plt.clf()
+        i  = i + 1
+
+        if length>=30 :
+            print board_to_solve.board
+        print 'length of path = ',length
+        print 'unsolvable board percent = ', falses/float(atempts)
+    # print path
     #board_to_solve.execute_path(path)
 
-
+    # inversions2 = 0
+    # inversions = 0
+    # arr = np.array([[2,1],[3,0]])
+    # single_line = copy.deepcopy(arr).ravel()
+    # for i in range(0,len(single_line) - 1):
+    #     for j in range(i+1, len(single_line) ):
+    #         if (single_line[i] > single_line[j]):
+    #             inversions = inversions + 1
+    #
+    # print inversions
+    #
+    #
+    # for i in range(0,len(single_line)):
+    #     pos = np.argwhere(single_line==i)[0][0]
+    #     #print pos,i,abs(i-pos)
+    #     inversions2 = inversions2 + abs(i-pos)
+    # print inversions2
 if __name__ == "__main__":
     main()
