@@ -63,16 +63,16 @@ class board:
     def possible_actions(self):
         zero_position = np.argwhere(self.board==0)[0]
         self.pos_actions = []
-        if zero_position[0]>0and not self.action == 'down':
+        if zero_position[0]>0 and not self.action == 'down':
             self.pos_actions.append(board(parent_board=self,action='up'))
 
-        if zero_position[0]<(self.boardsize-1)and not self.action == 'up':
+        if zero_position[0]<(self.boardsize-1) and not self.action == 'up':
             self.pos_actions.append(board(parent_board=self,action='down'))
 
-        if zero_position[1]>0and not self.action == 'right':
+        if zero_position[1]>0 and not self.action == 'right':
             self.pos_actions.append(board(parent_board=self,action='left'))
 
-        if zero_position[1]<(self.boardsize-1)and not self.action == 'left':
+        if zero_position[1]<(self.boardsize-1) and not self.action == 'left':
             self.pos_actions.append(board(parent_board=self,action='right'))
         return self.pos_actions
 
