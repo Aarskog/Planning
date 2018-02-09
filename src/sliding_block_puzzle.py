@@ -21,9 +21,9 @@ class board:
             #First board, intitialize with a random board
             self.board = np.array(np.reshape(random.sample(range(self.boardsize**2), self.boardsize**2),(-1,self.boardsize)))
 
-            #There are 9! different boards. Only half of them are solvable
+            #There are 9! different boards in a 3X3 board. Only half of them are solvable
             while not self.is_solvable():
-               self.board = np.array(np.reshape(random.sample(range(self.boardsize**2), self.boardsize**2),(-1,self.boardsize)))
+                self.board = np.array(np.reshape(random.sample(range(self.boardsize**2), self.boardsize**2),(-1,self.boardsize)))
 
             self.h = self.h_manhattan_distance()
 
@@ -59,7 +59,7 @@ class board:
 
         return False
 
-    #creates child nodes
+    #create and return child nodes
     def possible_actions(self):
         zero_position = np.argwhere(self.board==0)[0]
         self.pos_actions = []
@@ -112,17 +112,17 @@ class board:
             print action
             print self.board
 
-def print_path(board_node):
-    if not board_node.parent_board:
-        return
-    print_path(board_node.parent_board)
-    print board_node.action
+    def print_path(self):
+        if not self.parent_board:
+            return
+        print_path(self.parent_board)
+        print self.action
 
-def get_path(board_node,path):
-    if not board_node.parent_board:
-        return board_node.action
-    get_path(board_node.parent_board,path)
-    path.append(board_node.action)
+    def get_path(self,path):
+        if not self.parent_board:
+            return self.action
+        self.parent_board.get_path(path)
+        path.append(self.action)
 
 def solve(init_board):
     #Make a table of visited nodes as a hash function for quick check of existence
@@ -138,11 +138,11 @@ def solve(init_board):
 
         if possible_solution.is_solved():
             path = []
-            get_path(possible_solution,path)
+            possible_solution.get_path(path)
             init_board.execute_path(path)
             print '\nSolved'
             print 'Nodes visited = ',i
-            print 'Depth = ',possible_solution.depth
+            print 'Num actions = ',possible_solution.depth
             print "Solution=\n",path
 
             return path
@@ -182,7 +182,6 @@ def main():
         board_to_solve = board()
         print 'Board =\n', board_to_solve.board
         solve(board_to_solve)
-
 
 if __name__== "__main__":
     main()
