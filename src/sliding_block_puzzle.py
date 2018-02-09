@@ -10,50 +10,34 @@ class board:
     board = []
     boardsize = 3
     pos_actions = []
-    num_tries = 0
-    num_false = 0
-
-    def __init__(self,parent_board = None,action=None):
-        #self.boardsize = 3
+    solution = np.array(np.reshape(range(boardsize**2),(-1,boardsize)))
+    h = 0 #The heuristic function value. (estimated) distance to solution
+    depth = 0 #Distance from the initial node to current node
+    def __init__(self,parent_board = None, action=None):
         self.action = action
-        self.pos_actions = []
         self.parent_board = parent_board
-        self.solution = np.array(np.reshape(range(self.boardsize**2),(-1,self.boardsize)))
 
         if parent_board is None:
-            #First board; intitialize with a random board
-
+            #First board, intitialize with a random board
             self.board = np.array(np.reshape(random.sample(range(self.boardsize**2), self.boardsize**2),(-1,self.boardsize)))
-            # self.board = np.array([[8,6,7],[2,5,4],[3,0,1]])
-            # print self.is_solvable()
+
+            #There are 9! different boards. Only half of them are solvable
             while not self.is_solvable():
                self.board = np.array(np.reshape(random.sample(range(self.boardsize**2), self.boardsize**2),(-1,self.boardsize)))
 
-
-            #Test boards
-            #self.board = np.array([[1,2,5],[4,6,8],[3,7,0]])
-            #self.board = np.array([[0,2,5],[1,6,3],[7,8,4]])
-            #self.board = np.array([[2,0,1],[4,7,8],[6,3,5]])
-
-            #hardest board
-            #self.board = np.array([[8,6,7],[2,5,4],[3,0,1]])
-
             self.h = self.h_manhattan_distance()
-            self.depth = 0
 
         else:
             self.board =  copy.deepcopy(parent_board.board)
             self.do_action(action)
 
             self.depth = parent_board.depth + 1
-            #self.h_total = self.h_manhattan_distance()+copy.deepcopy(parent_board.h)
             self.h = self.h_manhattan_distance() + self.depth
 
     def is_solved(self):
         return (self.board == self.solution).all()
 
     def is_solvable(self):
-        self.num_tries = self.num_tries + 1
         #https://www.cs.bham.ac.uk/~mdr/teaching/modules04/java2/TilesSolvability.html
 
         #Get the board on a single line
@@ -69,10 +53,9 @@ class board:
             pos = np.argwhere(single_line==i)[0][0]
             inversions2 = inversions2 + abs(i-pos)
 
-            #if both are even or odd
+            #if both are even or odd, the board is solvable
         if (abs(inversions2-inversions)%2==0):
             return True
-        self.num_false = self.num_false + 1
 
         return False
 
@@ -80,26 +63,26 @@ class board:
     def possible_actions(self):
         zero_position = np.argwhere(self.board==0)[0]
         self.pos_actions = []
-        if zero_position[0]>0: #and not self.action == 'down':
+        if zero_position[0]>0and not self.action == 'down':
             self.pos_actions.append(board(parent_board=self,action='up'))
 
-        if zero_position[0]<(self.boardsize-1):#and not self.action == 'up':
+        if zero_position[0]<(self.boardsize-1)and not self.action == 'up':
             self.pos_actions.append(board(parent_board=self,action='down'))
 
-        if zero_position[1]>0: #and not self.action == 'right':
+        if zero_position[1]>0and not self.action == 'right':
             self.pos_actions.append(board(parent_board=self,action='left'))
 
-        if zero_position[1]<(self.boardsize-1): #and not self.action == 'left':
+        if zero_position[1]<(self.boardsize-1)and not self.action == 'left':
             self.pos_actions.append(board(parent_board=self,action='right'))
         return self.pos_actions
 
     def do_action(self,action):
         zero_position = np.argwhere(self.board==0)[0]
-        if action=='up':
+        if action == 'up':
             #Swap
             self.board[zero_position[0]][zero_position[1]],self.board[zero_position[0]-1][zero_position[1]] = self.board[zero_position[0]-1][zero_position[1]],self.board[zero_position[0]][zero_position[1]]
 
-        elif action=='down':
+        elif action == 'down':
             self.board[zero_position[0]][zero_position[1]],self.board[zero_position[0]+1][zero_position[1]] = self.board[zero_position[0]+1][zero_position[1]],self.board[zero_position[0]][zero_position[1]]
 
         elif action == 'left':
@@ -114,7 +97,6 @@ class board:
 
     def h_manhattan_distance(self):
         h = 0
-        #ex, ey = np.argwhere(self.board==0)[0]
         for i in range(1,self.boardsize**2):
             sx,sy = np.argwhere(self.board==i)[0]
             ex, ey =i/self.boardsize,i%self.boardsize
@@ -124,7 +106,6 @@ class board:
         return h
 
     def execute_path(self,path):
-        #print self.board
         for action in path:
             print '---------------'
             self.do_action(action)
@@ -141,37 +122,33 @@ def get_path(board_node,path):
     if not board_node.parent_board:
         return board_node.action
     get_path(board_node.parent_board,path)
-    #print board_node.action
     path.append(board_node.action)
-    #print path
 
-def solve2(init_board):
-    #init_board.board.flags.writeable = False
+def solve(init_board):
+    #Make a table of visited nodes as a hash function for quick check of existence
     visited = {tuple(init_board.board.data):True}
+
+    #Initiate queue with the inital board
     q = [init_board]
 
-    #root = Node(init_board.h,init_board)
-
     i = 0
-    possible_solution = init_board
-    maxdepth = 0
     while q:
-        #possible_solution = get_next_node(root)
-        #print possible_solution.board
+
         possible_solution = q.pop(0)
 
         if possible_solution.is_solved():
-            #print possible_solution.board
-            #print_path(possible_solution)
-            # print 'Solved'
-            # print 'Nodes visited = ',i
             path = []
             get_path(possible_solution,path)
-            #print path
+            init_board.execute_path(path)
+            print '\nSolved'
+            print 'Nodes visited = ',i
+            print 'Depth = ',possible_solution.depth
+            print "Solution=\n",path
+
             return path
 
-
         else:
+
             new_nodes = possible_solution.possible_actions()
 
             for new_node in new_nodes:
@@ -181,7 +158,6 @@ def solve2(init_board):
                     is_visited = True
 
                 if not is_visited:
-                    #binary_insert(root,Node(new_node.h,new_node))
                     visited[tuple(new_node.board.data)]=True
 
                     #Insert into sorted list
@@ -191,96 +167,22 @@ def solve2(init_board):
                             q.insert(k,new_node)
                             inserted = True
                             break
-
+                    #If the node heuristic value is the largest, add to the end of queue
                     if not inserted:
                         q.insert(len(q),new_node)
 
-
-            # j=0
-            # posit = 0
-
-
-
-        #visited[tuple(possible_solution.board.data)]=True
-        #visited.append(possible_solution.board)
-
-        # print 'Visited: ',len(q)
-        #print '{0}\r'.format(i),
-
-        if possible_solution.depth > maxdepth:
-            maxdepth = possible_solution.depth
-            # print 'depth= ',maxdepth
-        #print possible_solution.depth
-
-        # print "--------------debug------------"
-        # print 'i=',i
-        # print possible_solution.board
-        # print 'h=', possible_solution.h
-        # print "-------------------------------"
         i = i + 1
-        #print len(q)
 
 
     print '---NOT SOLVABLE---'
     print 'Nodes visited = ',i
     return []
 
-
 def main():
-    lenghts = []
-    plt.ion()
-    fig = plt.figure()
-    #ax = fig.add_subplot(111)
-
-    #plt.show(block=False)
-
-    bins = np.arange(0, 35, 1) # fixed bin size
-
-    i = 0
-    atempts = 0
-    falses = 0
-    while 1:
         board_to_solve = board()
-        #print board_to_solve.num_false
-        atempts = atempts + board_to_solve.num_tries
-        falses = falses + board_to_solve.num_false
+        print 'Board =\n', board_to_solve.board
+        solve(board_to_solve)
 
-        # print 'h manh=',board_to_solve.h
-        # print 'h misplaced=',board_to_solve.h_misplaced_tiles()
-        # print board_to_solve.board
-        path = solve2(board_to_solve)
-        length = len(path)
-        lenghts.append(length)
-        plt.hist(lenghts, bins=bins, alpha=0.5)
-        #plt.clf()
-        fig.canvas.draw()
-        #plt.show(block=False)
-        plt.clf()
-        i  = i + 1
 
-        if length>=30 :
-            print board_to_solve.board
-        print 'length of path = ',length
-        print 'unsolvable board percent = ', falses/float(atempts)
-    # print path
-    #board_to_solve.execute_path(path)
-
-    # inversions2 = 0
-    # inversions = 0
-    # arr = np.array([[2,1],[3,0]])
-    # single_line = copy.deepcopy(arr).ravel()
-    # for i in range(0,len(single_line) - 1):
-    #     for j in range(i+1, len(single_line) ):
-    #         if (single_line[i] > single_line[j]):
-    #             inversions = inversions + 1
-    #
-    # print inversions
-    #
-    #
-    # for i in range(0,len(single_line)):
-    #     pos = np.argwhere(single_line==i)[0][0]
-    #     #print pos,i,abs(i-pos)
-    #     inversions2 = inversions2 + abs(i-pos)
-    # print inversions2
-if __name__ == "__main__":
+if __name__== "__main__":
     main()
