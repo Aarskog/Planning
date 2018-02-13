@@ -1,15 +1,13 @@
 import numpy as np
 import copy
 import random
-import time
 
-import matplotlib.pyplot as plt
-import matplotlib.animation as animation
+
 
 class board:
     board = []
     boardsize = 3
-    pos_actions = []
+    pos_actions = [] #Possible actions i.e. child nodes
     solution = np.array(np.reshape(range(boardsize**2),(-1,boardsize)))
     h = 0 #The heuristic function value. (estimated) distance to solution
     depth = 0 #Distance from the initial node to current node
