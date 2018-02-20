@@ -1,4 +1,4 @@
-
+import copy
 
 
 
@@ -8,16 +8,49 @@ class Action:
 	preconditions = []
 	effects = []
 	def __init__(self,action):
-		print test
+		print '----------------------------'
+		elements = get_elements(action)
+		for element in elements:
+			element =  "".join(element)
+			
+			letters = []
+			i = 0
+			for letter in element:
+
+				if letter ==':':
+					print letters
+					letters = []
+
+				letters.append(letter)
+				i = i + 1
 
 
-class Predicates:
+class Predicate:
 	name = ''
 	parameters = []
+	
 	def __init__(self,predicate):
-		print predicate
+		self.parameters=[]
+		letters = []
+		named = False
 
+		i = 0
+		for letter in predicate:
+			if letter=='?':
+				if not self.name:
+					self.name = ''.join(letters)
+					letters=[]
+					named = True
 
+				self.parameters.append(predicate[i + 1])
+
+			letters.append(letter)
+			i = i + 1
+
+		if not named:
+			self.name = ''.join(predicate)
+
+	
 
 class Domain:
 	domain_name = ''
@@ -80,17 +113,11 @@ class Domain:
 
 
 				
-					
-				#print i,num_par_right-num_par_left
-				#print line
-			
-		print num_elements
 
 		if (num_par_right-num_par_left):
 			print 'Paranthese error'
 			#print line
 			
-
 	def set_element(self,element):
 		element = "".join(element)
 		element = element.lower()
@@ -110,19 +137,49 @@ class Domain:
 			self.set_predicates(element[12:-1])
 
 		elif element[1:8]==':action':
-			print element
+			self.actions.append(Action(element[8:-1]))
 
 	def set_predicates(self,element):
-		print 'sets'
-
-	def set_actions(self,element):
-		print 'action'
-
+		predicates = get_elements(element)
+		for predicate in predicates:
+			self.predicates.append(Predicate(predicate[1:-1]))
 
 
+def get_elements(line):
+
+	num_par_left = 0
+	num_par_right = 0
+
+	#nprl is one because the first parenthese shall be accounted for
+	num_par_right_last = 0
+	num_par_left_last = 0
+	element=[]
+	elements = []
+	num_elements = 0
+	for symbol in line:
+		element.append(symbol)
+		if symbol=='(':
+			num_par_right += 1
+
+		elif symbol ==')':
+			num_par_left +=1
+
+		
+		#If the number of parantheses has changed
+		if not (num_par_right_last == num_par_right) or not (num_par_left_last== num_par_left):
+			
+			if num_par_right-num_par_left==0:
+				num_elements+=0
+				elements.append(element)
+				element = []
+				#print 'new',i,line
+
+		num_par_left_last = num_par_left
+		num_par_right_last = num_par_right
+	return elements
 
 def main():
-	domain_file_name = 'C:\Users\Magnus\Documents\PDDL\Probs\Blocks\domain.pddl'
+	domain_file_name = 'C:\Users\Magnus\Documents\Planning\probs\\blocks\domain.pddl'
 
 	domain_file = open(domain_file_name,'r')
 
@@ -133,6 +190,11 @@ def main():
 		for arg in err.args:
 			print arg
 		print '------------------'
+	domain_file.close()
+
+	#for predicate in domain.predicates:
+	#	print predicate.name
+	
 
 if __name__=='__main__':
 	main()
