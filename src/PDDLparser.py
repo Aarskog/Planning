@@ -8,33 +8,68 @@ class Action:
 	preconditions = []
 	effects = []
 	def __init__(self,action):
+
 		print '----------------------------'
 		elements = get_elements(action)
+
 		for element in elements:
 			element =  "".join(element)
+			#print element
 			
-			letters = []
-			i = 0
-			for letter in element:
+			if element[0]!=':':
+				self.set_name_and_parameters(element)
+			elif element[0:13] == ':precondition':
+				self.set_preconditions(element)
 
-				if letter ==':':
-					print letters
-					letters = []
+			else:
+				#print element
+				a=1
 
-				letters.append(letter)
-				i = i + 1
 
+
+	def set_name_and_parameters(self,name_and_params):
+		#print name_and_params
+		letters = []
+		i = 0
+
+		for letter in name_and_params:
+
+			if letter ==':':
+				self.name="".join(letters)
+				letters = []
+
+			letters.append(letter)
+			i = i + 1
+	def set_preconditions(self,preconditions):
+		element= preconditions[14:-1]
+		#print element
+
+		#ignore 'and' statement since strips only allows conjunctions
+		if element[0:3]=='and':
+			element=element[3:]
+		#print element
+
+		if element[0]=='(':
+			preconditions = get_elements(element)
+			#print preconditions
+			for precondition in preconditions:
+				precondition =  "".join(precondition)[1:-1]
+				self.preconditions.append(Predicate(precondition))
+		else:
+			self.preconditions.append(Predicate(element))
 
 class Predicate:
 	name = ''
 	parameters = []
 	
 	def __init__(self,predicate):
+		#print "".join(predicate)
 		self.parameters=[]
 		letters = []
 		named = False
 
 		i = 0
+		#print predicate
 		for letter in predicate:
 			if letter=='?':
 				if not self.name:
@@ -83,7 +118,9 @@ class Domain:
 			i = i + 1
 			#Remove whitespace
 			line = line.replace(' ','')
+			line = line.replace('	','')
 			line = line.strip()
+			
 
 			if line:
 				#if comment line
@@ -134,6 +171,7 @@ class Domain:
 				raise ValueError('Error in: ',element,"Wrong requirements, must be strips")
 		
 		elif element[1:12]==':predicates':
+			#print element
 			self.set_predicates(element[12:-1])
 
 		elif element[1:8]==':action':
@@ -179,7 +217,11 @@ def get_elements(line):
 	return elements
 
 def main():
-	domain_file_name = 'C:\Users\Magnus\Documents\Planning\probs\\blocks\domain.pddl'
+
+	debug = False
+
+	domain_file_name = 'C:\Users\Magnus\Documents\Planning\probs\\satellite\domain.pddl'
+	#domain_file_name = 'C:\Users\Magnus\Documents\Planning\probs\\blocks\domain.pddl'
 
 	domain_file = open(domain_file_name,'r')
 
@@ -192,9 +234,21 @@ def main():
 		print '------------------'
 	domain_file.close()
 
-	#for predicate in domain.predicates:
-	#	print predicate.name
+
 	
+
+	if debug:
+		for predicate in domain.predicates:
+			print predicate.name
+			print predicate.parameters
+
+		for action in domain.actions:
+			print action.name
+			for precondition in action.preconditions:
+				print '---------------'
+				print precondition.name
+				print precondition.parameters
+		
 
 if __name__=='__main__':
 	main()
