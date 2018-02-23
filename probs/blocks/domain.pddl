@@ -6,7 +6,7 @@
 	       (clear ?x)
 	       (handempty)
 	       (holding ?x))
-  
+
   (:action pick-up
 	     :parameters (?x)
 	     :precondition (and (clear ?x) (ontable ?x) (handempty))
@@ -24,7 +24,7 @@
 		   (clear ?x)
 		   (handempty)
 		   (ontable ?x)))
- 
+
   (:action stack
 	     :parameters (?x ?y)
 	     :precondition (and (holding ?x) (clear ?y))
