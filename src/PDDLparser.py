@@ -3,15 +3,14 @@ import os
 
 
 class Action:
-	action_name = ''
-	parameters = []
-	preconditions = []
-	effects = []
-	delete_effects = [] #Delete litst effects e.g. not on location A
+
 	def __init__(self,action):
+		self.action_name = ''
 		self.preconditions=[]
 		self.effects = []
-		self.delete_effects=[]
+		self.delete_effects=[]#Delete litst effects e.g. not on location A
+		self.parameters = []
+
 		print '----------------------------'
 		elements = get_elements(action)
 
@@ -33,22 +32,32 @@ class Action:
 	def set_name_and_parameters(self,name_and_params):
 		#print name_and_params
 		letters = []
-		i = 0
-
 		for letter in name_and_params:
 
 			if letter ==':':
 				self.name="".join(letters)
 				letters = []
+			if letter=='?':
+				if letters[0]=='?':
+					self.parameters.append(join(letters[1:]))
+				letters=[]
 
 			letters.append(letter)
-			i = i + 1
+		self.parameters.append(join(letters[1:-1]))
+
+
+
+
 		letters = "".join(letters)
 		if letters[0:11] ==':parameters':
 			#remove ':parameters' and parantheses
 			letters = letters[12:-1]
+			temp_list = [] #Best name
+			for letter in letters:
+				if letter=='?':
+					a=1
 
-			
+
 
 	def set_preconditions(self,preconditions):
 		element= preconditions[14:-1]
@@ -82,12 +91,11 @@ class Action:
 
 
 class Predicate:
-	name = ''
-	parameters = []
-
 	def __init__(self,predicate):
 		# print "".join(predicate)
 		self.parameters=[]
+		self.name=''
+
 		letters = []
 		named = False
 
@@ -238,14 +246,18 @@ def get_elements(line):
 		num_par_right_last = num_par_right
 	return elements
 
+def join(arr):
+	return "".join(arr)
+
 def main():
+
 	# dir_path = os.path.dirname(os.path.realpath(__file__))
 	# print dir_path
 	# os.chdir("..\src")
 	# print dir_path
 
 	debug = False
-	# debug = True
+	debug = True
 
 
 	domain_file_name = '/home/magnaars/Planning/probs/satellite/domain.pddl'
@@ -294,4 +306,7 @@ def main():
 
 
 if __name__=='__main__':
+
 	main()
+#Fix naar action bare har en effect. Det blir rart
+#Fix predicate parameters
