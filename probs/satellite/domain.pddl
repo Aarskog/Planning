@@ -2,6 +2,7 @@
 (:requirements :strips)
 (:predicates
 	 (on_board ?i ?s) (supports ?i ?m) (pointing ?s ?d) (power_avail ?s) (power_on ?i) (calibrated ?i) (have_image ?d ?m) (calibration_target ?i ?d)(satellite ?x) (direction ?x) (instrument ?x) (mode ?x) )
+
 (:action turn_to
  :parameters ( ?s ?d_new ?d_prev)
  :precondition
@@ -33,7 +34,9 @@
 (:action take_image
  :parameters ( ?s ?d ?i ?m)
  :precondition
-	(and (satellite ?s) (direction ?d) (instrument ?i) (mode ?m)  (calibrated ?i) (on_board ?i ?s) (supports ?i ?m) (power_on ?i) (pointing ?s ?d) (power_on ?i))
+	(and (satellite ?s) (direction ?d) (instrument ?i)
+	(mode ?m)  (calibrated ?i) (on_board ?i ?s) (supports ?i ?m)
+	(power_on ?i) (pointing ?s ?d) (power_on ?i))
  :effect
 	 (have_image ?d ?m))
 
