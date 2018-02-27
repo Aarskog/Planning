@@ -1,41 +1,30 @@
 import domain as dom
-
-class State:
-	def __init__(self,problem_file):
-		self.name 		= ""
-		self.domain 	= []
-		self.objects 	= []
-		self.state 		= []
-		self.goal 		= []
-
-		self.parse(problem_file)
-
-	def parse(self,problem_file):
-		for line in problem_file:
-			print line
+import state as st
+import os
 
 def main():
 
-	# dir_path = os.path.dirname(os.path.realpath(__file__))
-	# print dir_path
-	# os.chdir("..\src")
-	# print dir_path
+	dir_path = os.path.dirname(os.path.realpath(__file__))
+	dir_path = dir_path[:-3]
 
 	debug = False
 	# debug = True
 
 
-	domain_file_name = '/home/magnaars/Planning/probs/satellite/domain.pddl'
-	domain_file_name = '/home/magnaars/Planning/probs/blocks/domain.pddl'
 
-	problem_file_name = '/home/magnaars/Planning/probs/satellite/problem01.pddl'
-	problem_file_name = '/home/magnaars/Planning/probs/blocks/problem.pddl'
+	domain_file_name = dir_path+'probs/satellite/domain.pddl'
+	problem_file_name = dir_path+'probs/satellite/problem01.pddl'
+
+	# problem_file_name = dir_path+'probs/blocks/problem.pddl'
+	# domain_file_name = dir_path+'probs/blocks/domain.pddl'
 
 	domain_file = open(domain_file_name,'r')
 	problem_file = open(problem_file_name,'r')
 
 	try:
 		domain = dom.Domain(domain_file)
+		init_state = st.State(problem_file)
+
 		if debug:
 			print "\n\nDomain name: ",domain.domain_name
 			for predicate in domain.predicates:
@@ -63,7 +52,6 @@ def main():
 					print "Delete effect params: ", delete_effect.parameters
 					print "------------------------------\n"
 
-
 	except ValueError as err:
 		print '------------------'
 		for arg in err.args:
@@ -73,7 +61,6 @@ def main():
 	problem_file.close()
 
 if __name__=='__main__':
-
 	main()
 
 

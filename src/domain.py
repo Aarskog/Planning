@@ -1,3 +1,5 @@
+import help_functions as hf
+
 class Action:
 
 	def __init__(self,action):
@@ -8,16 +10,16 @@ class Action:
 		self.parameters = []
 
 
-		elements = get_elements(action)
+		elements = hf.get_elements(action)
 
 		for element in elements:
-			element =  "".join(element)
+			element =  hf.join(element)
 			#print element
 
 			if element[0]!=':':
 				self.set_name_and_parameters(element)
 			elif element[0:13] == ':precondition':
-				#print "".join(element)
+				#print "".hf.join(element)
 				self.set_preconditions(element)
 
 			elif element[0:7]==':effect':
@@ -31,20 +33,20 @@ class Action:
 		for letter in name_and_params:
 
 			if letter ==':':
-				self.name="".join(letters)
+				self.name=hf.join(letters)
 				letters = []
 			if letter=='?':
 				if letters[0]=='?':
-					self.parameters.append(join(letters[1:]))
+					self.parameters.append(hf.join(letters[1:]))
 				letters=[]
 
 			letters.append(letter)
-		self.parameters.append(join(letters[1:-1]))
+		self.parameters.append(hf.join(letters[1:-1]))
 
 
 
 
-		letters = "".join(letters)
+		letters = hf.join(letters)
 		if letters[0:11] ==':parameters':
 			#remove ':parameters' and parantheses
 			letters = letters[12:-1]
@@ -63,10 +65,10 @@ class Action:
 		#print element
 
 		if element[0]=='(':
-			preconditions = get_elements(element)
+			preconditions = hf.get_elements(element)
 			#print preconditions
 			for precondition in preconditions:
-				precondition =  "".join(precondition)[1:-1]
+				precondition =  hf.join(precondition)[1:-1]
 				self.preconditions.append(Predicate(precondition))
 		else:
 			self.preconditions.append(Predicate(element))
@@ -82,10 +84,10 @@ class Action:
 		if effects[0:4]=='(and':
 			effects=effects[4:-1]
 
-		effects = get_elements(effects)
+		effects = hf.get_elements(effects)
 
 		for effect in effects:
-			effect = join(effect[1:-1])
+			effect = hf.join(effect[1:-1])
 			if effect[0:4]=='not(':
 				effect=effect[4:-1]
 				self.delete_effects.append(Predicate(effect))
@@ -94,7 +96,7 @@ class Action:
 
 class Predicate:
 	def __init__(self,predicate):
-		# print "".join(predicate)
+		# print "".hf.join(predicate)
 		self.parameters=[]
 		self.name=''
 
@@ -107,20 +109,20 @@ class Predicate:
 			if letter=='?':
 				have_parameters = True
 				if not named:
-					self.name = join(letters)
+					self.name = hf.join(letters)
 					named = True
 
 				else:
-					self.parameters.append(join(letters[1:]))
+					self.parameters.append(hf.join(letters[1:]))
 				letters=[]
 
 			letters.append(letter)
 
 		if have_parameters:
-			self.parameters.append(join(letters[1:]))
+			self.parameters.append(hf.join(letters[1:]))
 
 		if not named:
-			self.name = join(predicate)
+			self.name = hf.join(predicate)
 
 class Domain:
 	domain_name = ''
@@ -189,14 +191,13 @@ class Domain:
 			raise ValueError('Error. Inconsistent number of parantheses in domain file')
 
 	def set_element(self,element):
-		element = "".join(element)
+		element = hf.join(element)
 		element = element.lower()
 		#print element,'\n'
 
 
 		if element[1:7]=='define':
 			self.domain_name = element[14:-1]
-			#raise ValueError('Error in:',element)
 
 		elif element[1:14]==':requirements':
 			self.requirements = element[15:21]
@@ -204,7 +205,6 @@ class Domain:
 				raise ValueError('Error in: ',element,"Wrong requirements, must be strips")
 
 		elif element[1:12]==':predicates':
-			#print element
 			self.set_predicates(element[12:-1])
 
 		elif element[1:8]==':action':
@@ -213,43 +213,6 @@ class Domain:
 			raise ValueError('Error in: ',element,'Can not recognice this property.')
 
 	def set_predicates(self,element):
-		predicates = get_elements(element)
+		predicates = hf.get_elements(element)
 		for predicate in predicates:
 			self.predicates.append(Predicate(predicate[1:-1]))
-
-def get_elements(line):
-
-	num_par_left = 0
-	num_par_right = 0
-
-	#nprl is one because the first parenthese shall be accounted for
-	num_par_right_last = 0
-	num_par_left_last = 0
-	element=[]
-	elements = []
-	num_elements = 0
-	for symbol in line:
-		element.append(symbol)
-		if symbol=='(':
-			num_par_right += 1
-
-		elif symbol ==')':
-			num_par_left +=1
-
-
-		#If the number of parantheses has changed
-		if not (num_par_right_last == num_par_right) or not (num_par_left_last== num_par_left):
-
-			if num_par_right-num_par_left==0:
-				num_elements+=0
-				elements.append(element)
-				element = []
-				#print 'new',i,line
-
-		num_par_left_last = num_par_left
-		num_par_right_last = num_par_right
-	return elements
-
-def join(arr):
-	#sets an array of chars to string
-	return "".join(arr)
