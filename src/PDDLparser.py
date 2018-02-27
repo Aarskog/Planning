@@ -15,15 +15,15 @@ def main():
 	domain_file_name = dir_path+'probs/satellite/domain.pddl'
 	problem_file_name = dir_path+'probs/satellite/problem01.pddl'
 
-	# problem_file_name = dir_path+'probs/blocks/problem.pddl'
-	# domain_file_name = dir_path+'probs/blocks/domain.pddl'
+	problem_file_name = dir_path+'probs/blocks/problem.pddl'
+	domain_file_name = dir_path+'probs/blocks/domain.pddl'
 
 	domain_file = open(domain_file_name,'r')
 	problem_file = open(problem_file_name,'r')
 
 	try:
 		domain = dom.Domain(domain_file)
-		init_state = st.State(problem_file)
+		init_state = st.State(domain,problem_file=problem_file)
 
 		if debug:
 			print "\n\nDomain name: ",domain.domain_name

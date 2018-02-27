@@ -1,20 +1,36 @@
 import help_functions as hf
 
 class State:
-	def __init__(self,problem_file=None,parent_state=None):
+	def __init__(self,domain,problem_file=None,parent_state=None,action=None):
 		self.name 		= ""
 		self.domain 	= ""
 		self.objects 	= []
 		self.state 		= []
 		self.goal 		= []
+		self.parent_action =''
+		self.depth = 0
+		self.cost = 0
+		self.domainclass = domain
 
 		if not parent_state:
 			self.parse(problem_file)
-			# print self.name
-			# print self.domain
-			# print self.objects
-			# print self.state
-			# print self.goal
+			self.cost = self.heuristic()
+		else:
+			self.parent = parent_state
+			self.parent_action = action
+			self.depth = self.parent.depth + 1
+			self.cost = self.heuristic() + self.depth
+
+		self.get_child_states()
+
+	def heuristic(self):
+		return 0
+
+	def get_child_states(self):
+		for action in self.domainclass.actions:
+			print action.name
+			# if action.preconditions is satisfied:
+			# 	child_state= state(self,action)
 
 	def parse(self,problem_file):
 		single_line=""
@@ -82,7 +98,15 @@ class State:
 		goal =  goal[7:]
 		if remove_white(goal.lower()[2:6])=='and':
 			goal = goal[6:]
-		hf.get_elements(goal[:-2])
+		goals = hf.get_elements(goal[:-2])
+		for goal in goals:
+			i=0
+			for letter in goal:
+				if letter=='(':
+					self.goal.append(join(goal[i+1:-1]))
+					break
+				i=i+1
+
 
 def join(arr):
 	#sets an array of chars to string
