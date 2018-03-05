@@ -1,10 +1,14 @@
 import help_functions as hf
-
+import copy
+'''
+State class which holds the state of the system
+'''
 class State:
 	def __init__(self,domain,problem_file=None,parent_state=None,action=None):
 		self.name 		= ""
 		self.domain 	= ""
 		self.objects 	= []
+		self.num_objects= 0
 		self.state 		= []
 		self.goal 		= []
 		self.parent_action =''
@@ -21,16 +25,41 @@ class State:
 			self.depth = self.parent.depth + 1
 			self.cost = self.heuristic() + self.depth
 
-		self.get_child_states()
+		self.create_child_states()
 
 	def heuristic(self):
 		return 0
 
-	def get_child_states(self):
+	def create_child_states(self):
+		print self.state
 		for action in self.domainclass.actions:
-			print action.name
-			# if action.preconditions is satisfied:
-			# 	child_state= state(self,action)
+			j = 0
+			self.recursion_set_states(action,action.num_parameters,self.objects,[])
+
+			#for i in range(0,self.num_objects**action.num_parameters):
+
+				#test for every combination of object if it is possible to do an action
+
+
+	def recursion_set_states(self,action,num_parameters,objects,current_objects):
+		#current_objects = copy.deepcopy(current_objects)
+		if num_parameters > 1:
+			for objct in objects:
+				current_objects_copy = copy.deepcopy(current_objects)
+				current_objects_copy.append(objct)
+				self.recursion_set_states(action,num_parameters-1,objects,current_objects_copy)
+
+		else:
+
+			for objct in objects:
+				current_objects_copy = copy.deepcopy(current_objects)
+				current_objects_copy.append(objct)
+
+				if action.is_possible(self.state,current_objects_copy):
+					# action.get_addlist(parameters)
+					# action.get_deletelist(parameters)
+					print action.name + ' ' + join(current_objects_copy)
+
 
 	def parse(self,problem_file):
 		single_line=""
@@ -78,6 +107,7 @@ class State:
 
 		if not letters== ' ' and not letters:
 			self.objects.append(join(letters))
+		self.num_objects = len(self.objects)
 
 	def set_state(self,state):
 		states = hf.get_elements(state)
