@@ -102,8 +102,6 @@ class Action:
 				state = state.replace(' ','')
 				state = state.replace('	','')
 				selected_parameters = self.select_parameters(precondition,parameters)
-				#print selected_parameters
-				#print (precondition.name + join(selected_parameters)).lower(),state.lower()
 
 				if (precondition.name + join(selected_parameters)).lower() == state.lower():
 					success = True
@@ -112,6 +110,17 @@ class Action:
 				return False
 		return True
 
+	def get_addlist(self,parameters):
+		list_of_effects = []
+
+		for effect in self.effects:
+			# print effect.name+" "+" ".join(parameters)
+			list_of_effects.append(effect.name+" "+" ".join(parameters))
+		return list_of_effects
+
+
+	def get_deletelist(self,paremeters):
+		one = 1
 
 	def select_parameters(self,precondition,parameters):
 		if self.parameters == precondition.parameters:
