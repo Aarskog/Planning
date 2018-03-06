@@ -34,14 +34,17 @@ class State:
 
 			delete_list = action.get_deletelist(action_parameters)
 
+			print action.name + " " + " ".join(action_parameters)
+			print self.state
+
 			for item in delete_list:
-				# print item.#upper()
+				print item.upper()
 				self.state.remove(item.upper())
 
 			# self.state = action.get_deletelist()
 
 			print action.name + " " + " ".join(action_parameters)
-			print self.state
+			# print self.state
 			print action.get_deletelist(action_parameters)
 			print '-------------------------'
 
