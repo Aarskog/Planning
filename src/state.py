@@ -29,13 +29,21 @@ class State:
 			self.parent_action = action
 			self.depth = self.parent.depth + 1
 			self.cost = self.heuristic() + self.depth
-			self.state = parent_state.state
+			self.state = copy.deepcopy(parent_state.state)
 			self.state.extend(action.get_addlist(action_parameters))
-			#print self.state
-			#print '-------------'
-			#action.get_deletelist(current_objects_copy)
-			# print action.get_addlist(action_parameters)
 
+			delete_list = action.get_deletelist(action_parameters)
+
+			for item in delete_list:
+				# print item.#upper()
+				self.state.remove(item.upper())
+
+			# self.state = action.get_deletelist()
+
+			print action.name + " " + " ".join(action_parameters)
+			print self.state
+			print action.get_deletelist(action_parameters)
+			print '-------------------------'
 
 	def heuristic(self):
 		return 0
@@ -61,14 +69,14 @@ class State:
 
 				if action.is_possible(self.state,current_objects_copy):
 					self.child_states.append(State(self.domain,parent_state=self,action = action,action_parameters=current_objects_copy))
-					print action.name + ' ' + ' '.join(current_objects_copy)
-
+					# print action.name + ' ' + ' '.join(current_objects_copy)
 
 	def parse(self,problem_file):
 		single_line=""
 		for line in problem_file:
 			line = line.strip()
 			single_line = single_line + line + ' '
+			single_line = single_line.upper()
 			#print line
 
 		for element in hf.get_elements(single_line[1:-2]):
@@ -119,7 +127,7 @@ class State:
 			i=0
 			for letter in state:
 				if letter=='(':
-					self.state.append(join(state[i+1:-1]))
+					self.state.append((join(state[i+1:-1])).upper())
 					break
 				i=i+1
 

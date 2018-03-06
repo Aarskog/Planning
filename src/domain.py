@@ -12,6 +12,7 @@ class Action:
 
 		for element in elements:
 			element =  "".join(element)
+
 			#print element
 
 			if element[0]!=':':
@@ -112,15 +113,25 @@ class Action:
 
 	def get_addlist(self,parameters):
 		list_of_effects = []
-
+		#parameters_mapped = dict(zip(self.parameters,parameters))
 		for effect in self.effects:
 			# print effect.name+" "+" ".join(parameters)
-			list_of_effects.append(effect.name+" "+" ".join(parameters))
+			if effect.parameters:
+				list_of_effects.append(effect.name+" "+" ".join(self.select_parameters(effect,parameters)))
+			else:
+				list_of_effects.append(effect.name)
 		return list_of_effects
 
-
-	def get_deletelist(self,paremeters):
-		one = 1
+	def get_deletelist(self,parameters):
+		list_of_delete_effects = []
+		#parameters_mapped = dict(zip(self.parameters,parameters))
+		for delete_effect in self.delete_effects:
+			# print effect.name+" "+" ".join(parameters)
+			if delete_effect.parameters:
+				list_of_delete_effects.append(delete_effect.name+" "+" ".join(self.select_parameters(delete_effect,parameters)))
+			else:
+				list_of_delete_effects.append(delete_effect.name)
+		return list_of_delete_effects
 
 	def select_parameters(self,precondition,parameters):
 		if self.parameters == precondition.parameters:
@@ -151,7 +162,7 @@ class Predicate:
 			if letter=='?':
 				have_parameters = True
 				if not named:
-					self.name = join(letters)
+					self.name = (join(letters)).upper()
 					named = True
 
 				else:
