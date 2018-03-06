@@ -16,6 +16,7 @@
 )
 (:init
 	(satellite satellite0)
+
 	(instrument instrument0)
 	(supports instrument0 thermograph0)
 	(calibration_target instrument0 GroundStation2)

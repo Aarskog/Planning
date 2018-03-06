@@ -19,10 +19,9 @@ class State:
 
 
 		if not parent_state:
-
 			self.parse(problem_file)
 			self.cost = self.heuristic()
-			self.create_child_states()
+			#self.create_child_states()
 		else:
 
 			self.parent = parent_state
@@ -33,27 +32,15 @@ class State:
 			self.state.extend(action.get_addlist(action_parameters))
 
 			delete_list = action.get_deletelist(action_parameters)
-
-			print action.name + " " + " ".join(action_parameters)
-			print self.state
-
 			for item in delete_list:
-				print item.upper()
 				self.state.remove(item.upper())
 
-			# self.state = action.get_deletelist()
-
-			print action.name + " " + " ".join(action_parameters)
-			# print self.state
-			print action.get_deletelist(action_parameters)
-			print '-------------------------'
 
 	def heuristic(self):
 		return 0
 
 	def create_child_states(self):
 		for action in self.domainclass.actions:
-			j = 0
 			self.recursion_set_states(action,action.num_parameters,self.objects,[])
 
 	def recursion_set_states(self,action,num_parameters,objects,current_objects):
@@ -73,6 +60,9 @@ class State:
 				if action.is_possible(self.state,current_objects_copy):
 					self.child_states.append(State(self.domain,parent_state=self,action = action,action_parameters=current_objects_copy))
 					# print action.name + ' ' + ' '.join(current_objects_copy)
+
+	def get_child_states(self):
+		return self.child_states
 
 	def parse(self,problem_file):
 		single_line=""

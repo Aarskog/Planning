@@ -13,7 +13,7 @@
 (:action switch_on
  :parameters ( ?i ?s)
  :precondition
-	(and (instrument ?i) (satellite ?s)  (on_board ?i ?s) (power_avail ?s))
+	(and (instrument ?i) (satellite ?s)  (on_board ?i ?s) (power_avail ?s)(calibrated ?i))
  :effect
 	(and (power_on ?i) (not (calibrated ?i)) (not (power_avail ?s))))
 
