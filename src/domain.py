@@ -175,7 +175,7 @@ class Predicate:
 			self.parameters.append(join(letters[1:]))
 
 		if not named:
-			self.name = join(predicate)
+			self.name = join(predicate).upper()
 
 class Domain:
 	domain_name = ''

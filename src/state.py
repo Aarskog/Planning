@@ -1,10 +1,11 @@
 import help_functions as hf
 import copy
+
 '''
 State class which holds the state of the system
 '''
 class State:
-	def __init__(self,domain,problem_file=None,parent_state=None,action=None,action_parameters=None):
+	def __init__(self,domainclass=None,problem_file=None,parent_state=None,action=None,action_parameters=None):
 		self.name 		= ""
 		self.domain 	= ""
 		self.objects 	= []
@@ -14,7 +15,7 @@ class State:
 		self.parent_action 	= ''
 		self.depth 			= 0
 		self.cost 			= 0
-		self.domainclass 	= domain
+		self.domainclass 	= domainclass
 		self.child_states 	= []
 
 
@@ -23,23 +24,26 @@ class State:
 			self.cost = self.heuristic()
 			#self.create_child_states()
 		else:
-
 			self.parent = parent_state
 			self.parent_action = action
 			self.depth = self.parent.depth + 1
 			self.cost = self.heuristic() + self.depth
 			self.state = copy.deepcopy(parent_state.state)
 			self.state.extend(action.get_addlist(action_parameters))
+			self.goal = parent_state.goal
+			self.objects = parent_state.objects
 
 			delete_list = action.get_deletelist(action_parameters)
 			for item in delete_list:
 				self.state.remove(item.upper())
 
+		self.state = sorted(self.state)
 
 	def heuristic(self):
 		return 0
 
 	def create_child_states(self):
+
 		for action in self.domainclass.actions:
 			self.recursion_set_states(action,action.num_parameters,self.objects,[])
 
@@ -58,7 +62,8 @@ class State:
 				current_objects_copy.append(objct)
 
 				if action.is_possible(self.state,current_objects_copy):
-					self.child_states.append(State(self.domain,parent_state=self,action = action,action_parameters=current_objects_copy))
+
+					self.child_states.append(State(domainclass=self.domainclass,parent_state=self,action = action,action_parameters=current_objects_copy))
 					# print action.name + ' ' + ' '.join(current_objects_copy)
 
 	def get_child_states(self):
@@ -141,6 +146,23 @@ class State:
 					break
 				i=i+1
 
+	def is_goal_state(self):
+		found_goal = False
+
+		for goals in self.goal:
+			for state in self.state:
+				if goals==state:
+					found_goal = True
+					break
+			if not found_goal:
+				return False
+
+
+		return True
+				# print goal==state,goal,state
+
+	def get_cost(self):
+		return self.cost
 
 def join(arr):
 	#sets an array of chars to string

@@ -150,12 +150,9 @@ def solve(init_board):
             new_nodes = possible_solution.possible_actions()
 
             for new_node in new_nodes:
-                is_visited = False
 
-                if tuple(new_node.board.data) in visited:
-                    is_visited = True
+                if not  tuple(new_node.board.data) in visited:
 
-                if not is_visited:
                     visited[tuple(new_node.board.data)]=True
 
                     #Insert into sorted list
