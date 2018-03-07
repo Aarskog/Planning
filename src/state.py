@@ -18,6 +18,8 @@ class State:
 		self.domainclass 	= domainclass
 		self.child_states 	= []
 
+		self.action_parameters = action_parameters
+
 
 		if not parent_state:
 			self.parse(problem_file)
@@ -60,11 +62,10 @@ class State:
 			for objct in objects:
 				current_objects_copy = copy.deepcopy(current_objects)
 				current_objects_copy.append(objct)
-
-				if action.is_possible(self.state,current_objects_copy):
-
-					self.child_states.append(State(domainclass=self.domainclass,parent_state=self,action = action,action_parameters=current_objects_copy))
-					# print action.name + ' ' + ' '.join(current_objects_copy)
+				if items_in_list_are_unique(current_objects_copy):
+					if action.is_possible(self.state,current_objects_copy):
+						self.child_states.append(State(domainclass=self.domainclass,parent_state=self,action = action,action_parameters=current_objects_copy))
+						# print action.name + ' ' + ' '.join(current_objects_copy)
 
 	def get_child_states(self):
 		return self.child_states
@@ -150,6 +151,7 @@ class State:
 		found_goal = False
 
 		for goals in self.goal:
+			found_goal = False
 			for state in self.state:
 				if goals==state:
 					found_goal = True
@@ -172,3 +174,11 @@ def remove_white(arr):
 	arr = arr.replace(' ','')
 	arr = arr.replace('	','')
 	return arr
+
+def items_in_list_are_unique(items):
+	item_check_list = {}
+	for item in items:
+		if item in item_check_list:
+			return False
+		item_check_list[item]=True
+	return True

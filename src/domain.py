@@ -1,3 +1,4 @@
+import copy
 class Action:
 
 	def __init__(self,action):
@@ -95,20 +96,24 @@ class Action:
 				self.effects.append(Predicate(effect))
 
 	def is_possible(self,states,parameters):
-		#print parameters
-
+		# print '-----------------start----------------------'
+		# print self.name,parameters
 		for precondition in self.preconditions:
 			success = False
 			for state in states:
-				state = state.replace(' ','')
-				state = state.replace('	','')
+				# state = state.replace(' ','')
+				# state = state.replace('	','')
 				selected_parameters = self.select_parameters(precondition,parameters)
 
+				# print (precondition.name + join(selected_parameters)).lower(),state.lower()
+				state = state.replace(' ','')
+				state = state.replace('	','')
 				if (precondition.name + join(selected_parameters)).lower() == state.lower():
 					success = True
 					break
 			if not success:
 				return False
+
 		return True
 
 	def get_addlist(self,parameters):
@@ -134,6 +139,7 @@ class Action:
 		return list_of_delete_effects
 
 	def select_parameters(self,precondition,parameters):
+		parameters = copy.deepcopy(parameters)
 		if self.parameters == precondition.parameters:
 			return parameters
 		elif not parameters:
