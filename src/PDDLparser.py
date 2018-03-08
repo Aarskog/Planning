@@ -4,6 +4,8 @@ import os
 
 
 def a_star_solve(initial_state):
+
+
 	q = [initial_state]
 	visited_states = {tuple(initial_state.state):True}
 
@@ -13,8 +15,11 @@ def a_star_solve(initial_state):
 	print '---------------'
 	for item in initial_state.objects:
 		print item
+	print initial_state.goal
 	# print initial_state.objects
 	i = 0
+
+	initial_state.create_child_states2()
 
 	while q:
 		possible_solution = q.pop(0)
@@ -25,19 +30,24 @@ def a_star_solve(initial_state):
 		if possible_solution.is_goal_state():
 			print 'Success!!'
 			print possible_solution.state
+
+			for action in possible_solution.actions:
+				print action
+
 			return
 
 		else:
 			possible_solution.create_child_states()
 			new_states = possible_solution.get_child_states()
-
+			#print 'ksksksks'
 			new_states_inserted=0
 			for new_state in new_states:
-				print '______--__________'
-				print new_state.state
-				print new_state.parent_action.name, new_state.action_parameters
-				print tuple(new_state.state) in visited_states
-				print '___________________'
+
+				# print '______--__________'
+				# print new_state.state
+				# print new_state.parent_action.name, new_state.action_parameters
+				# print tuple(new_state.state) in visited_states
+				# print '___________________'
 
 				if not tuple(new_state.state) in visited_states:
 					visited_states[tuple(new_state.state)] = True
@@ -54,7 +64,7 @@ def a_star_solve(initial_state):
 
 			#print 'lenq',len(q)
 		i = i + 1
-		print i,'states visited',len(q),possible_solution.get_cost(),new_states_inserted
+		# print i,'states visited',len(q),possible_solution.get_cost(),new_states_inserted
 
 	print '---NOT SOLVABLE---'
 	print 'Nodes visited = ',i
@@ -76,12 +86,12 @@ def main():
 
 	domain_file_name = dir_path+'probs/satellite/domain.pddl'
 	problem_file_name = dir_path+'probs/satellite/problem01.pddl'
-    #
-	# problem_file_name = dir_path+'probs/blocks/problem.pddl'
-	# domain_file_name = dir_path+'probs/blocks/domain.pddl'
+    # #
+	problem_file_name = dir_path+'probs/blocks/problem.pddl'
+	domain_file_name = dir_path+'probs/blocks/domain.pddl'
 
-	# problem_file_name = dir_path+'probs/aircargo/problem.pddl'
-	# domain_file_name = dir_path+'probs/aircargo/domain.pddl'
+	problem_file_name = dir_path+'probs/aircargo/problem.pddl'
+	domain_file_name = dir_path+'probs/aircargo/domain.pddl'
 
 
 	domain_file = open(domain_file_name,'r')

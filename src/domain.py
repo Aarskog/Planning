@@ -151,6 +151,63 @@ class Action:
 				lst.append(parameters_mapped[param])
 			return lst
 
+	def return_possible(self,states):
+		print '------__-----------'
+		print self.name, self.parameters
+
+		precondition_matches = dict()
+		for precondition in self.preconditions:
+			for state in states:
+				state = state.split()
+				if precondition.name == state[0]:
+					if precondition.name+ " " + " ".join(precondition.parameters) in precondition_matches:
+						if state not in precondition_matches[precondition.name+ " " + " ".join(precondition.parameters)]:
+							precondition_matches[precondition.name + " " + " ".join(precondition.parameters)].append(state)
+					else:
+							precondition_matches[precondition.name+ " " + " ".join(precondition.parameters)] = [state]
+
+
+
+
+		for pm in precondition_matches:
+			print '\n',pm.split()
+			for pms in precondition_matches[pm]:
+				print pms
+
+
+		#
+		# # print states.split()
+		# states = copy.deepcopy(states)
+		# i = 0
+        #
+		# while i <= len(states) and i <= len(self.preconditions):
+		# 	parameters_mapped = dict()
+		# 	for j in range(i,len(states)):
+		# 		state = states[j].split()
+		# 		for precondition in self.preconditions:
+		# 			if precondition.name == state[0]:
+		# 				# print precondition.name ,state[0]
+		# 				if not self.dict_contains_keys(precondition.parameters,parameters_mapped):
+		# 					parameters_mapped.update(dict(zip(precondition.parameters,state[1:])))
+		# 					# print parameters_mapped
+        #
+        #
+        #
+		# 	print parameters_mapped
+		# 	i = i + 1
+        #
+		# state_list = []
+		# for state in states:
+		# 	state_list.append(state.split())
+
+		# for state in state_list:
+		# 	print state
+		# print '-----------------------'
+	def dict_contains_keys(self,dictionary,keys):
+		for key in keys:
+			if key in dictionary:
+				return True
+		return False
 
 
 class Predicate:

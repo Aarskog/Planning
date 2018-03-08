@@ -13,9 +13,9 @@
 (:action switch_on
  :parameters ( ?i ?s)
  :precondition
-	(and (instrument ?i) (satellite ?s)  (on_board ?i ?s) (power_avail ?s)(calibrated ?i))
+	(and (instrument ?i) (satellite ?s)  (on_board ?i ?s) (power_avail ?s))
  :effect
-	(and (power_on ?i) (not (calibrated ?i)) (not (power_avail ?s))))
+	(and (power_on ?i)  (not (power_avail ?s))))
 
 (:action switch_off
  :parameters ( ?i ?s)

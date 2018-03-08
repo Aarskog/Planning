@@ -17,22 +17,24 @@ class State:
 		self.cost 			= 0
 		self.domainclass 	= domainclass
 		self.child_states 	= []
-
 		self.action_parameters = action_parameters
-
+		self.actions = []
 
 		if not parent_state:
 			self.parse(problem_file)
 			self.cost = self.heuristic()
 			#self.create_child_states()
 		else:
+			self.actions = copy.deepcopy(parent_state.actions)
+			self.actions.append(action.name + ' ' + ' '.join(action_parameters))
+
+			self.goal = copy.deepcopy(parent_state.goal)
+			self.state = copy.deepcopy(parent_state.state)
 			self.parent = parent_state
 			self.parent_action = action
 			self.depth = self.parent.depth + 1
 			self.cost = self.heuristic() + self.depth
-			self.state = copy.deepcopy(parent_state.state)
 			self.state.extend(action.get_addlist(action_parameters))
-			self.goal = parent_state.goal
 			self.objects = parent_state.objects
 
 			delete_list = action.get_deletelist(action_parameters)
@@ -42,7 +44,26 @@ class State:
 		self.state = sorted(self.state)
 
 	def heuristic(self):
-		return 0
+		dist_to_goal = 0
+		# print len(self.state)
+		for goals in self.goal:
+			found_goal = False
+			for state in self.state:
+				#print goals==state
+				if goals==state:
+					found_goal = True
+					break
+			if not found_goal:
+				dist_to_goal += 1
+		# print dist_to_goal
+		return dist_to_goal
+
+
+	def create_child_states2(self):
+		for action in self.domainclass.actions:
+			return_parameters = action.return_possible(self.state)
+			if return_parameters:
+				self.child_states.append(State(domainclass=self.domainclass,parent_state=self,action = action,action_parameters=return_parameters))
 
 	def create_child_states(self):
 
