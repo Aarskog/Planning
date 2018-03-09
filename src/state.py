@@ -37,6 +37,7 @@ class State:
 			self.state.extend(action.get_addlist(action_parameters))
 			self.objects = parent_state.objects
 
+
 			delete_list = action.get_deletelist(action_parameters)
 			for item in delete_list:
 				self.state.remove(item.upper())
@@ -56,7 +57,7 @@ class State:
 			if not found_goal:
 				dist_to_goal += 1
 		# print dist_to_goal
-		return dist_to_goal
+		return 100*dist_to_goal
 
 
 	def create_child_states2(self):
@@ -66,9 +67,11 @@ class State:
 				self.child_states.append(State(domainclass=self.domainclass,parent_state=self,action = action,action_parameters=return_parameters))
 
 	def create_child_states(self):
-
+		# print '-------------start-------------------------------------'
 		for action in self.domainclass.actions:
+			# print action.name
 			self.recursion_set_states(action,action.num_parameters,self.objects,[])
+		# print '----------------------end----------------------------'
 
 	def recursion_set_states(self,action,num_parameters,objects,current_objects):
 		#current_objects = copy.deepcopy(current_objects)
@@ -83,8 +86,10 @@ class State:
 			for objct in objects:
 				current_objects_copy = copy.deepcopy(current_objects)
 				current_objects_copy.append(objct)
+				# print current_objects_copy
 				if items_in_list_are_unique(current_objects_copy):
 					if action.is_possible(self.state,current_objects_copy):
+						# print 'npw-----------------------------------------'
 						self.child_states.append(State(domainclass=self.domainclass,parent_state=self,action = action,action_parameters=current_objects_copy))
 						# print action.name + ' ' + ' '.join(current_objects_copy)
 
