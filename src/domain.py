@@ -14,8 +14,6 @@ class Action:
 		for element in elements:
 			element =  "".join(element)
 
-			#print element
-
 			if element[0]!=':':
 				self.set_name_and_parameters(element)
 			elif element[0:13] == ':precondition':
@@ -203,6 +201,7 @@ class Action:
 		# for state in state_list:
 		# 	print state
 		# print '-----------------------'
+
 	def dict_contains_keys(self,dictionary,keys):
 		for key in keys:
 			if key in dictionary:
@@ -304,7 +303,7 @@ class Domain:
 
 		#If the sum of left and right parantheses is not zero raise exepction
 		if (num_par_right-num_par_left):
-			raise ValueError('Error. Inconsistent number of parantheses in domain file')
+			raise ValueError('Error. Inconsistent number of left and right parantheses in domain file')
 
 	def set_element(self,element):
 		element = "".join(element)

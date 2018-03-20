@@ -19,6 +19,7 @@ class State:
 		self.child_states 	= []
 		self.action_parameters = action_parameters
 		self.actions = []
+		self.estimated_dist_to_goal = 0
 
 		if not parent_state:
 			self.parse(problem_file)
@@ -57,8 +58,8 @@ class State:
 			if not found_goal:
 				dist_to_goal += 1
 		# print dist_to_goal
-		return 100*dist_to_goal
-
+		self.estimated_dist_to_goal = dist_to_goal
+		return 50*dist_to_goal
 
 	def create_child_states2(self):
 		for action in self.domainclass.actions:
@@ -191,6 +192,9 @@ class State:
 
 	def get_cost(self):
 		return self.cost
+
+	def __cmp__(self, other):
+		return cmp(self.cost, other.cost)
 
 def join(arr):
 	#sets an array of chars to string

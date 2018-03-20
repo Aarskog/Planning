@@ -1,13 +1,17 @@
 import domain as dom
 import state as st
 import os
-
+from heapq import heappush
+from heapq import heappop
 
 def a_star_solve(initial_state):
-
+	heap = []
 
 	q = [initial_state]
+	heappush(heap,initial_state)
 	visited_states = {tuple(initial_state.state):True}
+
+
 
 	# print initial_state.state
 	# for item in initial_state.state:
@@ -21,8 +25,11 @@ def a_star_solve(initial_state):
 
 	# initial_state.create_child_states2()
 
-	while q:
-		possible_solution = q.pop(0)
+	while heap:
+		#possible_solution = q.pop(0)
+		possible_solution = heappop(heap)
+		#print possible_solution.name
+		#heappush(heap,possible_solution)
 		# print possible_solution.state
 		# if  possible_solution.parent_action:
 		# 	print possible_solution.parent_action.name,possible_solution.action_parameters
@@ -30,6 +37,7 @@ def a_star_solve(initial_state):
 		if possible_solution.is_goal_state():
 			print 'Success!!'
 			print possible_solution.state
+			print 'Length of solution: ',len(possible_solution.actions)
 
 			for action in possible_solution.actions:
 				print action
@@ -52,19 +60,23 @@ def a_star_solve(initial_state):
 				if not tuple(new_state.state) in visited_states:
 					visited_states[tuple(new_state.state)] = True
 					new_states_inserted = new_states_inserted +1
-					inserted = False
+					#inserted = False
 
-					for k in range(0,len(q)):
-						if new_state.get_cost() <= q[k].get_cost():
-							q.insert(k,new_state)
-							inserted = True
-							break
-					if not inserted:
-						q.insert(len(q),new_state)
+					heappush(heap,new_state)
+
+					# for k in range(0,len(q)):
+					# 	if new_state.get_cost() <= q[k].get_cost():
+					# 		q.insert(k,new_state)
+					# 		inserted = True
+					# 		break
+					# if not inserted:
+					# 	q.insert(len(q),new_state)
 
 			#print 'lenq',len(q)
 		i = i + 1
-		print 'states visited:',i,' length queue:',len(q),' depth:',possible_solution.depth,' New states:',new_states_inserted
+		print 'states visited:',i,' length queue:',len(heap),' depth:',possible_solution.depth,\
+		' New states:',new_states_inserted,' State cost: ',possible_solution.cost,\
+		' Dist to goal: ',possible_solution.estimated_dist_to_goal
 
 	print '---NOT SOLVABLE---'
 	print 'Nodes visited = ',i
@@ -87,12 +99,12 @@ def main():
 	domain_file_name = dir_path+'probs/satellite/domain.pddl'
 	problem_file_name = dir_path+'probs/satellite/problem01.pddl'
     # #
-	# problem_file_name = dir_path+'probs/blocks/problem.pddl'
-	# domain_file_name = dir_path+'probs/blocks/domain.pddl'
-    #
+	problem_file_name = dir_path+'probs/blocks/problem.pddl'
+	domain_file_name = dir_path+'probs/blocks/domain.pddl'
+
 	# problem_file_name = dir_path+'probs/aircargo/problem.pddl'
 	# domain_file_name = dir_path+'probs/aircargo/domain.pddl'
-    #
+	#
 
 	domain_file = open(domain_file_name,'r')
 	problem_file = open(problem_file_name,'r')
@@ -135,6 +147,7 @@ def main():
 		for arg in err.args:
 			print arg
 		print '------------------'
+
 	domain_file.close()
 	problem_file.close()
 
