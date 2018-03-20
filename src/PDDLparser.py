@@ -84,7 +84,7 @@ def a_star_solve(initial_state):
 
 
 
-#Magnus er best
+
 
 def main():
 
