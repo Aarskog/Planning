@@ -1,6 +1,5 @@
 import copy
 class Action:
-
 	def __init__(self,action):
 		self.action_name = ''
 		self.preconditions=[]
