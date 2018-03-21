@@ -70,10 +70,9 @@ def main():
 	problem_file_name = dir_path+'probs/blocks/problem.pddl'
 	domain_file_name = dir_path+'probs/blocks/domain.pddl'
 
-<<<<<<< HEAD
-=======
+
 	#aircargo problem
->>>>>>> devel
+
 	problem_file_name = dir_path+'probs/aircargo/problem.pddl'
 	domain_file_name = dir_path+'probs/aircargo/domain.pddl'
 
