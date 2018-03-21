@@ -7,33 +7,16 @@ from heapq import heappop
 def a_star_solve(initial_state):
 	heap = []
 
-	q = [initial_state]
 	heappush(heap,initial_state)
 	visited_states = {tuple(initial_state.state):True}
 
-
-
-	# print initial_state.state
-	# for item in initial_state.state:
-	# 	print item
-	# print '---------------'
-	# for item in initial_state.objects:
-	# 	print item
-	# print initial_state.goal
-	# # print initial_state.objects
 	i = 0
 
-	# initial_state.create_child_states2()
-
 	while heap:
-		#possible_solution = q.pop(0)
+
+		#Get the state with the lowest cost from the heap
 		possible_solution = heappop(heap)
-		#print possible_solution.name
-		#heappush(heap,possible_solution)
-		# print possible_solution.state
-		# if  possible_solution.parent_action:
-		# 	print possible_solution.parent_action.name,possible_solution.action_parameters
-		# #print  possible_solution.is_goal_state()
+
 		if possible_solution.is_goal_state():
 			print 'Success!!'
 			print possible_solution.state
@@ -41,38 +24,25 @@ def a_star_solve(initial_state):
 
 			for action in possible_solution.actions:
 				print action
-
 			return
 
 		else:
 			possible_solution.create_child_states()
 			new_states = possible_solution.get_child_states()
-			#print 'ksksksks'
-			new_states_inserted=0
+			new_states_inserted = 0
 			for new_state in new_states:
 
-				# print '______--__________'
-				# print new_state.state
-				# print new_state.parent_action.name, new_state.action_parameters
-				# print tuple(new_state.state) in visited_states
-				# print '___________________'
-
+				#check if the state already has been visited using hash table
 				if not tuple(new_state.state) in visited_states:
+
+					#Add the new state to visited states
 					visited_states[tuple(new_state.state)] = True
 					new_states_inserted = new_states_inserted +1
-					#inserted = False
 
+					#Add the new state to the queue using a heap sorted based on
+					#the state cost
 					heappush(heap,new_state)
 
-					# for k in range(0,len(q)):
-					# 	if new_state.get_cost() <= q[k].get_cost():
-					# 		q.insert(k,new_state)
-					# 		inserted = True
-					# 		break
-					# if not inserted:
-					# 	q.insert(len(q),new_state)
-
-			#print 'lenq',len(q)
 		i = i + 1
 		print 'states visited:',i,' length queue:',len(heap),' depth:',possible_solution.depth,\
 		' New states:',new_states_inserted,' State cost: ',possible_solution.cost,\
@@ -81,10 +51,6 @@ def a_star_solve(initial_state):
 	print '---NOT SOLVABLE---'
 	print 'Nodes visited = ',i
 	print q
-
-
-
-
 
 def main():
 
