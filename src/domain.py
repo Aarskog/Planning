@@ -307,12 +307,9 @@ class Domain:
 	def set_element(self,element):
 		element = "".join(element)
 		element = element.lower()
-		#print element,'\n'
-
 
 		if element[1:7]=='define':
 			self.domain_name = element[14:-1]
-			#raise ValueError('Error in:',element)
 
 		elif element[1:14]==':requirements':
 			self.requirements = element[15:21]
@@ -320,7 +317,6 @@ class Domain:
 				raise ValueError('Error in: ',element,"Wrong requirements, must be strips")
 
 		elif element[1:12]==':predicates':
-			#print element
 			self.set_predicates(element[12:-1])
 
 		elif element[1:8]==':action':
