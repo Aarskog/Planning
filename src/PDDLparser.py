@@ -68,9 +68,9 @@ def main():
 	problem_file_name = dir_path+'probs/blocks/problem.pddl'
 	domain_file_name = dir_path+'probs/blocks/domain.pddl'
 
-	# problem_file_name = dir_path+'probs/aircargo/problem.pddl'
-	# domain_file_name = dir_path+'probs/aircargo/domain.pddl'
-	#
+	problem_file_name = dir_path+'probs/aircargo/problem.pddl'
+	domain_file_name = dir_path+'probs/aircargo/domain.pddl'
+
 
 	domain_file = open(domain_file_name,'r')
 	problem_file = open(problem_file_name,'r')
