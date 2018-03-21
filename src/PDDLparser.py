@@ -18,10 +18,10 @@ def a_star_solve(initial_state):
 		possible_solution = heappop(heap)
 
 		if possible_solution.is_goal_state():
-			print 'Success!!'
-			print possible_solution.state
-			print 'Length of solution: ',len(possible_solution.actions)
-
+			print '\n\n----------Solutin found!---------------\n'
+			print 'The goal state is:\n',possible_solution.state
+			print '\nLength of solution: ',len(possible_solution.actions)
+			print '\nThe solution is: '
 			for action in possible_solution.actions:
 				print action
 			return
@@ -50,7 +50,7 @@ def a_star_solve(initial_state):
 
 	print '---NOT SOLVABLE---'
 	print 'Nodes visited = ',i
-	print q
+
 
 def main():
 
@@ -62,12 +62,18 @@ def main():
 
 
 
+	#satellite problem. Super slow
 	domain_file_name = dir_path+'probs/satellite/domain.pddl'
 	problem_file_name = dir_path+'probs/satellite/problem01.pddl'
-    # #
+
+	#Block world problem quick enough
 	problem_file_name = dir_path+'probs/blocks/problem.pddl'
 	domain_file_name = dir_path+'probs/blocks/domain.pddl'
 
+<<<<<<< HEAD
+=======
+	#aircargo problem
+>>>>>>> devel
 	problem_file_name = dir_path+'probs/aircargo/problem.pddl'
 	domain_file_name = dir_path+'probs/aircargo/domain.pddl'
 
