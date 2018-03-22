@@ -194,6 +194,7 @@ class State:
 		return self.cost
 
 	def __cmp__(self, other):
+		#Used for heap sort
 		return cmp(self.cost, other.cost)
 
 def join(arr):

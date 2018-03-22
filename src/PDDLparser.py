@@ -12,13 +12,15 @@ def a_star_solve(initial_state):
 
 	i = 0
 
+	initial_state.create_child_states2()
+
 	while heap:
 
 		#Get the state with the lowest cost from the heap
 		possible_solution = heappop(heap)
 
 		if possible_solution.is_goal_state():
-			print '\n\n----------Solutin found!---------------\n'
+			print '\n\n----------Solution found!---------------\n'
 			print 'The goal state is:\n',possible_solution.state
 			print '\nLength of solution: ',len(possible_solution.actions)
 			print '\nThe solution is: '
@@ -37,16 +39,16 @@ def a_star_solve(initial_state):
 
 					#Add the new state to visited states
 					visited_states[tuple(new_state.state)] = True
-					new_states_inserted = new_states_inserted +1
+					new_states_inserted = new_states_inserted + 1
 
 					#Add the new state to the queue using a heap sorted based on
 					#the state cost
 					heappush(heap,new_state)
 
 		i = i + 1
-		print 'states visited:',i,' length queue:',len(heap),' depth:',possible_solution.depth,\
-		' New states:',new_states_inserted,' State cost: ',possible_solution.cost,\
-		' Dist to goal: ',possible_solution.estimated_dist_to_goal
+		# print 'states visited:',i,' length queue:',len(heap),' depth:',possible_solution.depth,\
+		# ' New states:',new_states_inserted,' State cost: ',possible_solution.cost,\
+		# ' Dist to goal: ',possible_solution.estimated_dist_to_goal
 
 	print '---NOT SOLVABLE---'
 	print 'Nodes visited = ',i
@@ -72,7 +74,6 @@ def main():
 
 
 	#aircargo problem
-
 	problem_file_name = dir_path+'probs/aircargo/problem.pddl'
 	domain_file_name = dir_path+'probs/aircargo/domain.pddl'
 

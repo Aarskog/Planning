@@ -22,7 +22,7 @@ class Action:
 			elif element[0:7]==':effect':
 				self.sef_effects(element)
 			else:
-					raise ValueError('Error in: ',element,"Did not recognice action property")
+					raise ValueError('Error in: ',element,"Did not recognize action property")
 
 	def set_name_and_parameters(self,name_and_params):
 		#print name_and_params
@@ -206,7 +206,6 @@ class Action:
 			if key in dictionary:
 				return True
 		return False
-
 
 class Predicate:
 	def __init__(self,predicate):
