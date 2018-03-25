@@ -21,10 +21,10 @@ class board:
 			#First board, intitialize with a random board
 			self.board = np.array(np.reshape(random.sample(range(self.boardsize**2), self.boardsize**2),(-1,self.boardsize)))
 
-			#There are 9! different boards in a 3X3 board. Only half of them are solvable
+			# #There are 9! different boards in a 3X3 board. Only half of them are solvable
 			while not self.is_solvable():
 				self.board = np.array(np.reshape(random.sample(range(self.boardsize**2), self.boardsize**2),(-1,self.boardsize)))
-
+			self.board = np.array([[8,6,7],[2,5,4],[3,0,1]])#29 moves
 			self.dist_to_goal = self.h_manhattan_distance()
 			self.h = self.dist_to_goal
 
