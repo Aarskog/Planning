@@ -46,9 +46,9 @@ def a_star_solve(initial_state):
 					heappush(heap,new_state)
 
 		i = i + 1
-		# print 'states visited:',i,' length queue:',len(heap),' depth:',possible_solution.depth,\
-		# ' New states:',new_states_inserted,' State cost: ',possible_solution.cost,\
-		# ' Dist to goal: ',possible_solution.estimated_dist_to_goal
+		print 'states visited:',i,' length queue:',len(heap),' depth:',possible_solution.depth,\
+		' New states:',new_states_inserted,' State cost: ',possible_solution.cost,\
+		' Dist to goal: ',possible_solution.estimated_dist_to_goal
 
 	print '---NOT SOLVABLE---'
 	print 'Nodes visited = ',i
@@ -76,6 +76,10 @@ def main():
 	#aircargo problem
 	problem_file_name = dir_path+'probs/aircargo/problem.pddl'
 	domain_file_name = dir_path+'probs/aircargo/domain.pddl'
+
+	# problem_file_name = dir_path+'probs/shakey/problem1.pddl'
+	# domain_file_name = dir_path+'probs/shakey/domain.pddl'
+
 
 
 	domain_file = open(domain_file_name,'r')
@@ -126,5 +130,5 @@ def main():
 if __name__=='__main__':
 	main()
 
-
+#https://github.com/primaryobjects/strips/tree/master/strips
 #Fix naar action bare har en effect. Det blir rart

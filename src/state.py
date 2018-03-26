@@ -6,40 +6,39 @@ State class which holds the state of the system
 '''
 class State:
 	def __init__(self,domainclass=None,problem_file=None,parent_state=None,action=None,action_parameters=None):
-		self.name 		= ""
-		self.domain 	= ""
-		self.objects 	= []
-		self.num_objects= 0
-		self.state 		= []
-		self.goal 		= []
-		self.parent_action 	= ''
-		self.depth 			= 0
-		self.cost 			= 0
-		self.domainclass 	= domainclass
-		self.child_states 	= []
-		self.action_parameters = action_parameters
-		self.actions = []
+		self.name 				= "" #name of the problem
+		self.domain 			= "" #Name of the domain
+		self.objects 			= [] #Objects in the current problem
+		self.num_objects		= 0
+		self.state 				= [] #State holds the predicates that defines the current state
+		self.goal 				= [] #Goal state
+		self.parent_action 		= action #name of the action
+		self.depth 				= 0 #How many action in is the state
+		self.cost 				= 0 #Estimated cost from initial state to goal state via this state
+		self.domainclass 		= domainclass
+		self.child_states 		= []
+		self.action_parameters 	= action_parameters
+		self.actions 			= []
 		self.estimated_dist_to_goal = 0
+		self.parent 			= parent_state
 
 		if not parent_state:
 			self.parse(problem_file)
 			self.cost = self.heuristic()
-			#self.create_child_states()
+
 		else:
-			self.actions = copy.deepcopy(parent_state.actions)
+			self.actions 	= copy.deepcopy(parent_state.actions)
 			self.actions.append(action.name + ' ' + ' '.join(action_parameters))
 
-			self.goal = copy.deepcopy(parent_state.goal)
-			self.state = copy.deepcopy(parent_state.state)
-			self.parent = parent_state
-			self.parent_action = action
-			self.depth = self.parent.depth + 1
-			self.cost = self.heuristic() + self.depth
+			self.goal 		= parent_state.goal
+			self.state 		= copy.deepcopy(parent_state.state)
+			self.depth 		= self.parent.depth + 1
+			self.cost 		= self.heuristic() + self.depth
 			self.state.extend(action.get_addlist(action_parameters))
-			self.objects = parent_state.objects
+			self.objects 	= parent_state.objects
 
 
-			delete_list = action.get_deletelist(action_parameters)
+			delete_list 	= action.get_deletelist(action_parameters)
 			for item in delete_list:
 				self.state.remove(item.upper())
 
@@ -70,7 +69,7 @@ class State:
 	def create_child_states(self):
 		# print '-------------start-------------------------------------'
 		for action in self.domainclass.actions:
-			# print action.name
+
 			self.recursion_set_states(action,action.num_parameters,self.objects,[])
 		# print '----------------------end----------------------------'
 
@@ -94,6 +93,7 @@ class State:
 						self.child_states.append(State(domainclass=self.domainclass,parent_state=self,action = action,action_parameters=current_objects_copy))
 						# print action.name + ' ' + ' '.join(current_objects_copy)
 
+
 	def get_child_states(self):
 		return self.child_states
 
@@ -103,8 +103,8 @@ class State:
 			line = line.strip()
 			single_line = single_line + line + ' '
 			single_line = single_line.upper()
-			#print line
 
+			#single_line.strip()
 		for element in hf.get_elements(single_line[1:-2]):
 			element = hf.join(element)
 
@@ -126,7 +126,8 @@ class State:
 			elif element[2:7].lower()==':goal':
 				self.set_goal_state(element)
 			else:
-				raise ValueError('Error in: ',element,'Can not recognice this property. Problem File')
+				print element[2:7]
+				raise ValueError('Error in:',element,'Can not recognice this property. Problem File')
 
 	def set_objects(self,objects):
 

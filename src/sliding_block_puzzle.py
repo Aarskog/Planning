@@ -3,7 +3,10 @@ import copy
 import random
 from heapq import heappush
 from heapq import heappop
-
+'''
+Solves the 3X3 sliding block puzzle using A* algorithm with the Manhattan
+distance heuristic
+'''
 
 class board:
 	board = []
