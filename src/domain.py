@@ -54,12 +54,13 @@ class Action:
 					a=1
 
 	def set_preconditions(self,preconditions):
-		element= preconditions[14:-1]
+		element = preconditions[14:-1]
 		#print element
 
 		#ignore 'and' statement since strips only allows conjunctions
 		if element[0:3]=='and':
 			element=element[3:]
+
 		#print element
 
 		if element[0]=='(':
@@ -67,6 +68,8 @@ class Action:
 			#print preconditions
 			for precondition in preconditions:
 				precondition =  "".join(precondition)[1:-1]
+				if precondition[0:3]=='not':
+					raise ValueError('Error in action: ',self.name,precondition,"No negative preconditions")
 				self.preconditions.append(Predicate(precondition))
 		else:
 			self.preconditions.append(Predicate(element))
@@ -93,16 +96,17 @@ class Action:
 				self.effects.append(Predicate(effect))
 
 	def is_possible(self,states,parameters):
-		# print '-----------------start----------------------'
-		# print self.name,parameters
+		'''
+		Finds out if it is possible to execute action given a set of objects
+		and a state
+		'''
+
 		for precondition in self.preconditions:
 			success = False
 			for state in states:
-				# state = state.replace(' ','')
-				# state = state.replace('	','')
+
 				selected_parameters = self.select_parameters(precondition,parameters)
 
-				# print (precondition.name + join(selected_parameters)).lower(),state.lower()
 				state = state.replace(' ','')
 				state = state.replace('	','')
 				if (precondition.name + join(selected_parameters)).lower() == state.lower():
@@ -144,13 +148,19 @@ class Action:
 		else:
 			parameters_mapped = dict(zip(self.parameters,parameters))
 			lst = []
+			#print self.name
+			#print precondition.name
 			for param in precondition.parameters:
 				lst.append(parameters_mapped[param])
 			return lst
 
 	def return_possible(self,states):
-		print '------__-----------'
-		print self.name, self.parameters
+		'''
+		Returns the possible combinatoins of input objects that satisfy the
+		state and this actions preconditions
+		'''
+		# print '----------__-----------'
+		# print self.name, self.parameters
 
 		precondition_matches = dict()
 		for precondition in self.preconditions:
@@ -165,47 +175,57 @@ class Action:
 
 
 
+		combinations = []
+		self.recursive_get_combo(combinations,precondition_matches,{})
 
-		for pm in precondition_matches:
-			print '\n',pm.split()
-			for pms in precondition_matches[pm]:
-				print pms
+		#delete duplicates
+		seen = set()
+		new_l = []
+		for d in combinations:
+		    t = tuple(d.items())
+		    if t not in seen:
+		        seen.add(t)
+		        new_l.append(d)
 
+		possible_parameters = []
+		for combination in new_l:
+			temp = []
+			for parameter in self.parameters:
+				temp.append(combination[parameter])
+			possible_parameters.append(temp)
+		return possible_parameters
 
-		#
-		# # print states.split()
-		# states = copy.deepcopy(states)
-		# i = 0
-        #
-		# while i <= len(states) and i <= len(self.preconditions):
-		# 	parameters_mapped = dict()
-		# 	for j in range(i,len(states)):
-		# 		state = states[j].split()
-		# 		for precondition in self.preconditions:
-		# 			if precondition.name == state[0]:
-		# 				# print precondition.name ,state[0]
-		# 				if not self.dict_contains_keys(precondition.parameters,parameters_mapped):
-		# 					parameters_mapped.update(dict(zip(precondition.parameters,state[1:])))
-		# 					# print parameters_mapped
-        #
-        #
-        #
-		# 	print parameters_mapped
-		# 	i = i + 1
-        #
-		# state_list = []
-		# for state in states:
-		# 	state_list.append(state.split())
+	def recursive_get_combo(self,combinations,precondition_matches,temp_combinations):
+		if precondition_matches:
+			first_key = precondition_matches.keys()[0]
+			first_key_split = first_key.split()
 
-		# for state in state_list:
-		# 	print state
-		# print '-----------------------'
+			if len(first_key) > 1:
+
+				for state in precondition_matches[first_key]:
+					i = 1
+					temp_combinations_copy = copy.deepcopy(temp_combinations)
+					for obj in state[1:]:
+						if not first_key_split[i] in temp_combinations_copy:
+							temp_combinations_copy[first_key_split[i]] = obj
+						i = i + 1
+					self.recursive_get_combo(combinations,removekey(precondition_matches,first_key),temp_combinations_copy)
+
+		else:
+			if len(temp_combinations) == self.num_parameters:
+				combinations.append(temp_combinations)
+
 
 	def dict_contains_keys(self,dictionary,keys):
 		for key in keys:
 			if key in dictionary:
 				return True
 		return False
+
+def removekey(d, key):
+    r = dict(d)
+    del r[key]
+    return r
 
 class Predicate:
 	def __init__(self,predicate):

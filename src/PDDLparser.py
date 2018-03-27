@@ -3,8 +3,10 @@ import state as st
 import os
 from heapq import heappush
 from heapq import heappop
+import time
 
 def a_star_solve(initial_state):
+
 	heap = []
 
 	heappush(heap,initial_state)
@@ -12,7 +14,7 @@ def a_star_solve(initial_state):
 
 	i = 0
 
-	initial_state.create_child_states2()
+	#initial_state.create_child_states2()
 
 	while heap:
 
@@ -26,10 +28,12 @@ def a_star_solve(initial_state):
 			print '\nThe solution is: '
 			for action in possible_solution.actions:
 				print action
+
 			return
 
+
 		else:
-			possible_solution.create_child_states()
+			possible_solution.create_child_states2()
 			new_states = possible_solution.get_child_states()
 			new_states_inserted = 0
 			for new_state in new_states:
@@ -64,23 +68,25 @@ def main():
 
 
 
-	#satellite problem. Super slow
+	#satellite problem.
 	domain_file_name = dir_path+'probs/satellite/domain.pddl'
 	problem_file_name = dir_path+'probs/satellite/problem01.pddl'
 
 	#Block world problem quick enough
-	problem_file_name = dir_path+'probs/blocks/problem.pddl'
-	domain_file_name = dir_path+'probs/blocks/domain.pddl'
-
-
+	# problem_file_name = dir_path+'probs/blocks/problem.pddl'
+	# domain_file_name = dir_path+'probs/blocks/domain.pddl'
+	#
+	# # #
 	#aircargo problem
-	problem_file_name = dir_path+'probs/aircargo/problem.pddl'
-	domain_file_name = dir_path+'probs/aircargo/domain.pddl'
+# 	problem_file_name = dir_path+'probs/aircargo/problem.pddl'
+# 	domain_file_name = dir_path+'probs/aircargo/domain.pddl'
+# #
 
-	# problem_file_name = dir_path+'probs/shakey/problem1.pddl'
-	# domain_file_name = dir_path+'probs/shakey/domain.pddl'
-
-
+	# Shakey Super slow cant solve
+# 	problem_file_name = dir_path+'probs/shakey/problem1.pddl'
+# 	domain_file_name = dir_path+'probs/shakey/domain.pddl'
+#
+# #
 
 	domain_file = open(domain_file_name,'r')
 	problem_file = open(problem_file_name,'r')
@@ -89,7 +95,10 @@ def main():
 		domain = dom.Domain(domain_file)
 		init_state = st.State(domainclass = domain,problem_file=problem_file)
 
+		start_time = time.time()
 		a_star_solve(init_state)
+		print("--- %s seconds ---" % (time.time() - start_time))
+
 
 		if debug:
 			print "\n\nDomain name: ",domain.domain_name

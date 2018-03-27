@@ -63,8 +63,10 @@ class State:
 	def create_child_states2(self):
 		for action in self.domainclass.actions:
 			return_parameters = action.return_possible(self.state)
-			if return_parameters:
-				self.child_states.append(State(domainclass=self.domainclass,parent_state=self,action = action,action_parameters=return_parameters))
+			for parameters in return_parameters:
+				if action.is_possible(self.state,parameters):
+					self.child_states.append(State(domainclass=self.domainclass,parent_state=self,action = action,action_parameters=parameters))
+
 
 	def create_child_states(self):
 		# print '-------------start-------------------------------------'
@@ -89,10 +91,10 @@ class State:
 				# print current_objects_copy
 				if items_in_list_are_unique(current_objects_copy):
 					if action.is_possible(self.state,current_objects_copy):
+						#print current_objects_copy
 						# print 'npw-----------------------------------------'
 						self.child_states.append(State(domainclass=self.domainclass,parent_state=self,action = action,action_parameters=current_objects_copy))
 						# print action.name + ' ' + ' '.join(current_objects_copy)
-
 
 	def get_child_states(self):
 		return self.child_states
