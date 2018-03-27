@@ -5,6 +5,8 @@ from heapq import heappush
 from heapq import heappop
 import time
 
+import cProfile, pstats, StringIO
+
 def a_star_solve(initial_state):
 
 	heap = []
@@ -16,7 +18,7 @@ def a_star_solve(initial_state):
 
 	#initial_state.create_child_states2()
 
-	while heap:
+	while heap:#: and i < 60 :
 
 		#Get the state with the lowest cost from the heap
 		possible_solution = heappop(heap)
@@ -72,21 +74,25 @@ def main():
 	domain_file_name = dir_path+'probs/satellite/domain.pddl'
 	problem_file_name = dir_path+'probs/satellite/problem01.pddl'
 
+#satellite problem.
+	domain_file_name = dir_path+'probs/satellite/domain.pddl'
+	problem_file_name = dir_path+'probs/satellite/problem01.pddl'
+
 	#Block world problem quick enough
-	# problem_file_name = dir_path+'probs/blocks/problem.pddl'
-	# domain_file_name = dir_path+'probs/blocks/domain.pddl'
-	#
-	# # #
-	#aircargo problem
+	problem_file_name = dir_path+'probs/blocks/problem.pddl'
+	domain_file_name = dir_path+'probs/blocks/domain.pddl'
+#
+# 	# # #
+# 	# aircargo problem
 # 	problem_file_name = dir_path+'probs/aircargo/problem.pddl'
 # 	domain_file_name = dir_path+'probs/aircargo/domain.pddl'
 # #
-
-	# Shakey Super slow cant solve
+#
+# 	#Shakey Super slow cant solve
 # 	problem_file_name = dir_path+'probs/shakey/problem1.pddl'
 # 	domain_file_name = dir_path+'probs/shakey/domain.pddl'
 #
-# #
+#
 
 	domain_file = open(domain_file_name,'r')
 	problem_file = open(problem_file_name,'r')
@@ -96,7 +102,25 @@ def main():
 		init_state = st.State(domainclass = domain,problem_file=problem_file)
 
 		start_time = time.time()
+
+		profiling = False
+		# profiling = True
+		if profiling:
+			pr = cProfile.Profile()
+			pr.enable()
+
 		a_star_solve(init_state)
+
+		if profiling:
+			pr.disable()
+			s = StringIO.StringIO()
+			sortby = 'cumulative'
+			ps = pstats.Stats(pr, stream=s).sort_stats(sortby)
+			ps.print_stats()
+			print s.getvalue()
+
+
+
 		print("--- %s seconds ---" % (time.time() - start_time))
 
 

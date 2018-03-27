@@ -27,11 +27,11 @@ class State:
 			self.cost = self.heuristic()
 
 		else:
-			self.actions 	= copy.deepcopy(parent_state.actions)
+			self.actions 	= copy.copy(parent_state.actions)
 			self.actions.append(action.name + ' ' + ' '.join(action_parameters))
 
 			self.goal 		= parent_state.goal
-			self.state 		= copy.deepcopy(parent_state.state)
+			self.state 		= copy.copy(parent_state.state)
 			self.depth 		= self.parent.depth + 1
 			self.cost 		= self.heuristic() + self.depth
 			self.state.extend(action.get_addlist(action_parameters))
@@ -58,7 +58,7 @@ class State:
 				dist_to_goal += 1
 		# print dist_to_goal
 		self.estimated_dist_to_goal = dist_to_goal
-		return 50*dist_to_goal
+		return 20*dist_to_goal
 
 	def create_child_states2(self):
 		for action in self.domainclass.actions:
@@ -66,7 +66,6 @@ class State:
 			for parameters in return_parameters:
 				if action.is_possible(self.state,parameters):
 					self.child_states.append(State(domainclass=self.domainclass,parent_state=self,action = action,action_parameters=parameters))
-
 
 	def create_child_states(self):
 		# print '-------------start-------------------------------------'
