@@ -184,7 +184,7 @@ class Action:
 			for pms in precondition_matches[pm]:
 				print pms
 		combinations = []
-		print precondition_matches
+		#print precondition_matches
 
 		self.recursive_get_combo(combinations,precondition_matches,{})
 
