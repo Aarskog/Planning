@@ -36,7 +36,7 @@
  :precondition
 	(and (satellite ?s) (direction ?d) (instrument ?i)
 	(mode ?m)  (calibrated ?i) (on_board ?i ?s) (supports ?i ?m)
-	(power_on ?i) (pointing ?s ?d) (power_on ?i))
+	(pointing ?s ?d) (power_on ?i))
  :effect
 	 (have_image ?d ?m))
 

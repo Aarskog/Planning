@@ -115,6 +115,7 @@ class Action:
 					break
 			if not success:
 				print 'False'
+				print parameters,'\n'
 				return False
 
 
@@ -163,8 +164,8 @@ class Action:
 		Returns the possible combinatoins of input objects that satisfy the
 		state and this actions preconditions
 		'''
-		print '----------__-----------'
-		print self.name, self.parameters
+		# print '----------__-----------'
+		# print self.name, self.parameters
 
 		precondition_matches = dict()
 		for precondition in self.preconditions:
@@ -179,14 +180,14 @@ class Action:
 
 
 
-		for pm in precondition_matches:
-			print '\n',pm.split()
-			for pms in precondition_matches[pm]:
-				print pms
-		combinations = []
-		#print precondition_matches
+		# for pm in precondition_matches:
+		# 	print '\n',pm.split()
+		# 	for pms in precondition_matches[pm]:
+		# 		print pms
 
-		self.recursive_get_combo(combinations,precondition_matches,{})
+		combinations = []
+		if len(precondition_matches)==len(self.preconditions):
+			self.recursive_get_combo(combinations,precondition_matches,{})
 
 
 		#delete duplicates
@@ -220,7 +221,7 @@ class Action:
 				for state in precondition_matches[first_key]:
 					go = False
 					i = 1
-					temp_combinations_copy = copy.copy(temp_combinations)
+					temp_combinations_copy = temp_combinations.copy()
 					for obj in state[1:]:
 
 						if not first_key_split[i] in temp_combinations_copy:
@@ -230,6 +231,7 @@ class Action:
 							go = True
 						else:
 							go = False
+							break
 
 
 
