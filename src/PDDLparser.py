@@ -18,7 +18,7 @@ def a_star_solve(initial_state):
 
 	#initial_state.create_child_states2()
 
-	while heap:#: and i < 60 :
+	while heap:# and i < 60 :
 
 		#Get the state with the lowest cost from the heap
 		possible_solution = heappop(heap)
@@ -78,21 +78,22 @@ def main():
 	domain_file_name = dir_path+'probs/satellite/domain.pddl'
 	problem_file_name = dir_path+'probs/satellite/problem01.pddl'
 
+
 	#Block world problem quick enough
 	problem_file_name = dir_path+'probs/blocks/problem.pddl'
 	domain_file_name = dir_path+'probs/blocks/domain.pddl'
-#
-# 	# # #
-# 	# aircargo problem
-# 	problem_file_name = dir_path+'probs/aircargo/problem.pddl'
-# 	domain_file_name = dir_path+'probs/aircargo/domain.pddl'
-# #
-#
-# 	#Shakey Super slow cant solve
-# 	problem_file_name = dir_path+'probs/shakey/problem1.pddl'
-# 	domain_file_name = dir_path+'probs/shakey/domain.pddl'
-#
-#
+
+
+	# # aircargo problem
+	# problem_file_name = dir_path+'probs/aircargo/problem.pddl'
+	# domain_file_name = dir_path+'probs/aircargo/domain.pddl'
+
+
+	# #Shakey Super slow cant solve
+	# problem_file_name = dir_path+'probs/shakey/problem1.pddl'
+	# domain_file_name = dir_path+'probs/shakey/domain.pddl'
+
+
 
 	domain_file = open(domain_file_name,'r')
 	problem_file = open(problem_file_name,'r')
@@ -104,7 +105,7 @@ def main():
 		start_time = time.time()
 
 		profiling = False
-		# profiling = True
+		profiling = True
 		if profiling:
 			pr = cProfile.Profile()
 			pr.enable()

@@ -114,7 +114,9 @@ class Action:
 					success = True
 					break
 			if not success:
+				print 'False'
 				return False
+
 
 		return True
 
@@ -182,7 +184,10 @@ class Action:
 			for pms in precondition_matches[pm]:
 				print pms
 		combinations = []
+		print precondition_matches
+
 		self.recursive_get_combo(combinations,precondition_matches,{})
+
 
 		#delete duplicates
 		# seen = set()
@@ -205,29 +210,44 @@ class Action:
 		'''
 		get possible combinations of objects based on predonditions and states
 		'''
-		go = False
-		if precondition_matches and len(temp_combinations) < self.num_parameters:
+
+		if precondition_matches:# and len(temp_combinations) < self.num_parameters:
 			first_key = precondition_matches.keys()[0]
 			first_key_split = first_key.split()
 
-			if len(first_key_split):
+			if len(first_key_split)>1:
 
 				for state in precondition_matches[first_key]:
+					go = False
 					i = 1
 					temp_combinations_copy = copy.copy(temp_combinations)
 					for obj in state[1:]:
+
 						if not first_key_split[i] in temp_combinations_copy:
 							temp_combinations_copy[first_key_split[i]] = obj
+							go = True
 						elif obj == temp_combinations_copy[first_key_split[i]]:
 							go = True
+						else:
+							go = False
+
+
 
 						i = i + 1
-					#if not go:
-					self.recursive_get_combo(combinations,removekey(precondition_matches,first_key),temp_combinations_copy)
+					if go:
+						self.recursive_get_combo(combinations,removekey(precondition_matches,first_key),temp_combinations_copy)
+			else:
+				temp_combinations_copy = copy.copy(temp_combinations)
+				self.recursive_get_combo(combinations,removekey(precondition_matches,first_key),temp_combinations_copy)
+
 
 		else:
 			if len(temp_combinations) == self.num_parameters and temp_combinations not in combinations:
 				combinations.append(temp_combinations)
+				# print '---------'
+				# for c in combinations:
+				# 	print c
+				# print'-------------'
 
 	def dict_contains_keys(self,dictionary,keys):
 		for key in keys:

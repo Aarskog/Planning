@@ -65,7 +65,10 @@ class State:
 			return_parameters = action.return_possible(self.state)
 			for parameters in return_parameters:
 				if action.is_possible(self.state,parameters):
+					print 'gogo'
 					self.child_states.append(State(domainclass=self.domainclass,parent_state=self,action = action,action_parameters=parameters))
+				#else:
+					#print 'action no go'
 
 	def create_child_states(self):
 		# print '-------------start-------------------------------------'
