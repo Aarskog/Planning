@@ -60,40 +60,12 @@ class State:
 		self.estimated_dist_to_goal = dist_to_goal
 		return 20*dist_to_goal
 
-	def create_child_states2(self):
+	def create_child_states(self):
 		for action in self.domainclass.actions:
 			return_parameters = action.return_possible(self.state)
 			for parameters in return_parameters:
 				#if action.is_possible(self.state,parameters):
 				self.child_states.append(State(domainclass=self.domainclass,parent_state=self,action = action,action_parameters=parameters))
-
-	def create_child_states(self):
-		# print '-------------start-------------------------------------'
-		for action in self.domainclass.actions:
-
-			self.recursion_set_states(action,action.num_parameters,self.objects,[])
-		# print '----------------------end----------------------------'
-
-	def recursion_set_states(self,action,num_parameters,objects,current_objects):
-		#current_objects = copy.deepcopy(current_objects)
-		if num_parameters > 1:
-			for objct in objects:
-				current_objects_copy = copy.deepcopy(current_objects)
-				current_objects_copy.append(objct)
-				self.recursion_set_states(action,num_parameters-1,objects,current_objects_copy)
-
-		else:
-
-			for objct in objects:
-				current_objects_copy = copy.deepcopy(current_objects)
-				current_objects_copy.append(objct)
-				# print current_objects_copy
-				if items_in_list_are_unique(current_objects_copy):
-					if action.is_possible(self.state,current_objects_copy):
-						#print current_objects_copy
-						# print 'npw-----------------------------------------'
-						self.child_states.append(State(domainclass=self.domainclass,parent_state=self,action = action,action_parameters=current_objects_copy))
-						# print action.name + ' ' + ' '.join(current_objects_copy)
 
 	def get_child_states(self):
 		return self.child_states

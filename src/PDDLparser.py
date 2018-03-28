@@ -16,8 +16,6 @@ def a_star_solve(initial_state):
 
 	i = 0
 
-	#initial_state.create_child_states2()
-
 	while heap:# and i < 600 :
 
 		#Get the state with the lowest cost from the heap
@@ -35,7 +33,7 @@ def a_star_solve(initial_state):
 
 
 		else:
-			possible_solution.create_child_states2()
+			possible_solution.create_child_states()
 			new_states = possible_solution.get_child_states()
 			new_states_inserted = 0
 			for new_state in new_states:
@@ -88,8 +86,8 @@ def main():
 	# problem_file_name = dir_path+'probs/aircargo/problem.pddl'
 	# domain_file_name = dir_path+'probs/aircargo/domain.pddl'
 	# #
-	# #
-	# #Shakey Super slow cant solve
+	#
+	# #Shakey cant solve
 	# problem_file_name = dir_path+'probs/shakey/problem1.pddl'
 	# domain_file_name = dir_path+'probs/shakey/domain.pddl'
 

@@ -96,31 +96,6 @@ class Action:
 			else:
 				self.effects.append(Predicate(effect))
 
-	def is_possible(self,states,parameters):
-		'''
-		Finds out if it is possible to execute action given a set of objects
-		and a state
-		'''
-
-		for precondition in self.preconditions:
-			success = False
-			for state in states:
-
-				selected_parameters = self.select_parameters(precondition,parameters)
-
-				state = state.replace(' ','')
-				state = state.replace('	','')
-				if (precondition.name + join(selected_parameters)).lower() == state.lower():
-					success = True
-					break
-			if not success:
-				print 'False'
-				print parameters,'\n'
-				return False
-
-
-		return True
-
 	def get_addlist(self,parameters):
 		list_of_effects = []
 		#parameters_mapped = dict(zip(self.parameters,parameters))
@@ -150,11 +125,9 @@ class Action:
 		elif not parameters:
 			return parameters
 		else:
-			#parameters = copy.deepcopy(parameters)
 			parameters_mapped = dict(zip(self.parameters,parameters))
 			lst = []
-			#print self.name
-			#print precondition.name
+
 			for param in precondition.parameters:
 				lst.append(parameters_mapped[param])
 			return lst
@@ -164,8 +137,6 @@ class Action:
 		Returns the possible combinatoins of input objects that satisfy the
 		state and this actions preconditions
 		'''
-		# print '----------__-----------'
-		# print self.name, self.parameters
 
 		precondition_matches = dict()
 		for precondition in self.preconditions:
@@ -179,25 +150,9 @@ class Action:
 							precondition_matches[precondition.name+ " " + " ".join(precondition.parameters)] = [state]
 
 
-
-		# for pm in precondition_matches:
-		# 	print '\n',pm.split()
-		# 	for pms in precondition_matches[pm]:
-		# 		print pms
-
 		combinations = []
 		if len(precondition_matches)==len(self.preconditions):
 			self.recursive_get_combo(combinations,precondition_matches,{})
-
-
-		#delete duplicates
-		# seen = set()
-		# new_l = []
-		# for d in combinations:
-		#     t = tuple(d.items())
-		#     if t not in seen:
-		#         seen.add(t)
-		#         new_l.append(d)
 
 		possible_parameters = []
 		for combination in combinations:
@@ -234,7 +189,6 @@ class Action:
 							break
 
 
-
 						i = i + 1
 					if go:
 						self.recursive_get_combo(combinations,removekey(precondition_matches,first_key),temp_combinations_copy)
@@ -246,16 +200,7 @@ class Action:
 		else:
 			if len(temp_combinations) == self.num_parameters and temp_combinations not in combinations:
 				combinations.append(temp_combinations)
-				# print '---------'
-				# for c in combinations:
-				# 	print c
-				# print'-------------'
 
-	def dict_contains_keys(self,dictionary,keys):
-		for key in keys:
-			if key in dictionary:
-				return True
-		return False
 
 def removekey(d, key):
     r = dict(d)
