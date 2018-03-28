@@ -15,11 +15,22 @@ def a_star_solve(initial_state):
 	visited_states = {tuple(initial_state.state):True}
 
 	i = 0
-
-	while heap:# and i < 600 :
+	new_states_inserted = 0
+	lowest_dist = float('inf')
+	deepest = 0
+	while heap:# and i < 1000 :
 
 		#Get the state with the lowest cost from the heap
 		possible_solution = heappop(heap)
+
+		if possible_solution.estimated_dist_to_goal < lowest_dist:
+			lowest_dist = possible_solution.estimated_dist_to_goal
+		if possible_solution.depth > deepest:
+			deepest = possible_solution.depth
+
+		print 'states visited:',i,' len queue:',len(heap),' depth:',possible_solution.depth,deepest,\
+		' New states:',new_states_inserted,' State cost: ',possible_solution.cost,\
+		' Dist goal: ',possible_solution.estimated_dist_to_goal,lowest_dist#,len(possible_solution.state)
 
 		if possible_solution.is_goal_state():
 			print '\n\n----------Solution found!---------------\n'
@@ -40,7 +51,7 @@ def a_star_solve(initial_state):
 
 				#check if the state already has been visited using hash table
 				if not tuple(new_state.state) in visited_states:
-
+					new_state.set_state_cost()
 					#Add the new state to visited states
 					visited_states[tuple(new_state.state)] = True
 					new_states_inserted = new_states_inserted + 1
@@ -49,10 +60,10 @@ def a_star_solve(initial_state):
 					#the state cost
 					heappush(heap,new_state)
 
+
+
 		i = i + 1
-		print 'states visited:',i,' length queue:',len(heap),' depth:',possible_solution.depth,\
-		' New states:',new_states_inserted,' State cost: ',possible_solution.cost,\
-		' Dist to goal: ',possible_solution.estimated_dist_to_goal
+
 
 	print '---NOT SOLVABLE---'
 	print 'Nodes visited = ',i
@@ -72,10 +83,6 @@ def main():
 	domain_file_name = dir_path+'probs/satellite/domain.pddl'
 	problem_file_name = dir_path+'probs/satellite/problem01.pddl'
 
-#satellite problem.
-	domain_file_name = dir_path+'probs/satellite/domain.pddl'
-	problem_file_name = dir_path+'probs/satellite/problem01.pddl'
-
 
 	# # #Block world problem quick enough
 	# problem_file_name = dir_path+'probs/blocks/problem.pddl'
@@ -83,14 +90,17 @@ def main():
 
 
 	# #aircargo problem
-	# problem_file_name = dir_path+'probs/aircargo/problem.pddl'
-	# domain_file_name = dir_path+'probs/aircargo/domain.pddl'
+	problem_file_name = dir_path+'probs/aircargo/problem.pddl'
+	domain_file_name = dir_path+'probs/aircargo/domain.pddl'
+
 	# #
-	#
-	# #Shakey cant solve
+	# Shakey cant solve
 	# problem_file_name = dir_path+'probs/shakey/problem1.pddl'
 	# domain_file_name = dir_path+'probs/shakey/domain.pddl'
-
+	# #
+ 	# # # #Rover
+	# problem_file_name = dir_path+'probs/rover/problem.pddl'
+	# domain_file_name = dir_path+'probs/rover/domain.pddl'
 
 
 	domain_file = open(domain_file_name,'r')

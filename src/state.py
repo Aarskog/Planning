@@ -24,7 +24,7 @@ class State:
 
 		if not parent_state:
 			self.parse(problem_file)
-			self.cost = self.heuristic()
+			self.cost = self.ff_heuristic()
 
 		else:
 			self.actions 	= copy.copy(parent_state.actions)
@@ -33,10 +33,10 @@ class State:
 			self.goal 		= parent_state.goal
 			self.state 		= copy.copy(parent_state.state)
 			self.depth 		= self.parent.depth + 1
-			self.cost 		= self.heuristic() + self.depth
+
+
 			self.state.extend(action.get_addlist(action_parameters))
 			self.objects 	= parent_state.objects
-
 
 			delete_list 	= action.get_deletelist(action_parameters)
 			for item in delete_list:
@@ -44,8 +44,12 @@ class State:
 
 		self.state = sorted(self.state)
 
+	def set_state_cost(self):
+		self.cost = self.ff_heuristic() + self.depth
+
 	def heuristic(self):
 		dist_to_goal = 0
+		#print 'p ness'
 		# print len(self.state)
 		for goals in self.goal:
 			found_goal = False
@@ -58,7 +62,35 @@ class State:
 				dist_to_goal += 1
 		# print dist_to_goal
 		self.estimated_dist_to_goal = dist_to_goal
-		return 20*dist_to_goal
+		return 1*dist_to_goal
+
+	def ff_heuristic(self):
+		state = self.state[:]
+		cost = 0
+		previous_lenght_state = len(state)
+		while not self.is_goal_state_external(state):
+			#Find possible actions
+			add_list = []
+			for action in self.domainclass.actions:
+				return_parameters = action.return_possible(state)
+
+				for parameters in return_parameters:
+					new_items = action.get_addlist(parameters)
+					add_list.extend(new_items)
+			cost = cost + 1
+			for add_state in add_list:
+				if add_state not in state:
+					state.append(add_state)
+			#print cost,len(state)#,state
+			if 	previous_lenght_state == len(state):
+				a=1
+				#raise ValueError('Error: Problem not solvable')
+			previous_lenght_state = len(state)
+
+			#print cost,len(state)
+		self.estimated_dist_to_goal = cost + self.heuristic()
+		return 10*(cost + self.heuristic())
+
 
 	def create_child_states(self):
 		for action in self.domainclass.actions:
@@ -163,6 +195,19 @@ class State:
 
 		return True
 				# print goal==state,goal,state
+
+	def is_goal_state_external(self,state):
+		found_goal = False
+
+		for goals in self.goal:
+			found_goal = False
+			for states in state:
+				if goals==states:
+					found_goal = True
+					break
+			if not found_goal:
+				return False
+		return True
 
 	def get_cost(self):
 		return self.cost
