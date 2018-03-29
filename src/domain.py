@@ -98,12 +98,13 @@ class Action:
 
 	def get_addlist(self,parameters):
 		list_of_effects = []
-		#parameters_mapped = dict(zip(self.parameters,parameters))
+
 		for effect in self.effects:
-			# print effect.name+" "+" ".join(parameters)
+
 			if effect.parameters:
 				list_of_effects.append(effect.name+" "+" ".join(self.select_parameters(effect,parameters)))
 			else:
+				#If the effect has no parameters e.g. (hand-empty)
 				list_of_effects.append(effect.name)
 		return list_of_effects
 

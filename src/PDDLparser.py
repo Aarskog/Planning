@@ -80,25 +80,25 @@ def main():
 
 
 	#satellite problem.
-	domain_file_name = dir_path+'probs/satellite/domain.pddl'
-	problem_file_name = dir_path+'probs/satellite/problem01.pddl'
-
+	# domain_file_name = dir_path+'probs/satellite/domain.pddl'
+	# problem_file_name = dir_path+'probs/satellite/problem01.pddl'
 	#
-	#Block world problem quick enough
-	problem_file_name = dir_path+'probs/blocks/problem.pddl'
-	domain_file_name = dir_path+'probs/blocks/domain.pddl'
-
-
-	# # #aircargo problem
-	problem_file_name = dir_path+'probs/aircargo/problem.pddl'
-	domain_file_name = dir_path+'probs/aircargo/domain.pddl'
-
-
-	# # 
-	problem_file_name = dir_path+'probs/shakey/problem1.pddl'
-	domain_file_name = dir_path+'probs/shakey/domain.pddl'
+	# #
+	# #Block world problem quick enough
+	# problem_file_name = dir_path+'probs/blocks/problem.pddl'
+	# domain_file_name = dir_path+'probs/blocks/domain.pddl'
 	#
- 	# # # # #Rover
+	#
+	# # # #aircargo problem
+	# problem_file_name = dir_path+'probs/aircargo/problem.pddl'
+	# domain_file_name = dir_path+'probs/aircargo/domain.pddl'
+	#
+	#
+	# # # #
+	# problem_file_name = dir_path+'probs/shakey/problem1.pddl'
+	# domain_file_name = dir_path+'probs/shakey/domain.pddl'
+	# # # #
+ 	# # # # # #Rover
 	problem_file_name = dir_path+'probs/rover/problem.pddl'
 	domain_file_name = dir_path+'probs/rover/domain.pddl'
 

@@ -50,12 +50,12 @@ class State:
 		self.state = sorted(self.state)
 
 	def set_state_cost(self):
-		self.cost = self.heuristic() + 0.1*self.depth
+		self.cost = self.heuristic() + 0.2*self.depth
 
 	def heuristic(self):
-		#self.estimated_dist_to_goal = (self.ff_heuristic() + self.missing_goal_states_heuristic())
-		self.estimated_dist_to_goal = self.missing_goal_states_heuristic()
-		#self.estimated_dist_to_goal = self.hsp_heuristic()
+		#self.estimated_dist_to_goal = self.hsp_heuristic() + self.missing_goal_states_heuristic()
+		#self.estimated_dist_to_goal = self.missing_goal_states_heuristic()
+		self.estimated_dist_to_goal = self.hsp_heuristic()
 		return 1*self.estimated_dist_to_goal
 
 	def missing_goal_states_heuristic(self):
@@ -79,29 +79,43 @@ class State:
 		state = self.state[:]
 		cost = 0
 		previous_lenght_state = len(state)
-		while not self.is_goal_state_external(state):
+
+		completed_subgoals = self.get_number_of_completed_subgoals(state)
+		depth = 1
+		while not completed_subgoals==len(self.goal):
 			#Find possible actions
 			add_list = []
 			for action in self.domainclass.actions:
 				return_parameters = action.return_possible(state)
 
 				for parameters in return_parameters:
+
 					new_items = action.get_addlist(parameters)
 					add_list.extend(new_items)
-			cost = cost + 1
+
+
 			for add_state in add_list:
 				if add_state not in state:
+					completed_subgoals_prev = self.get_number_of_completed_subgoals(state)
+
+
 					state.append(add_state)
+
+					completed_subgoals = self.get_number_of_completed_subgoals(state)
+					cost = cost + depth*(completed_subgoals-completed_subgoals_prev)
+
+
 			#print cost,len(state)#,state
 			if 	previous_lenght_state == len(state):
 				return cost
 				#raise ValueError('Error: Problem not solvable')
 			previous_lenght_state = len(state)
 
+			depth = depth + 1
+			completed_subgoals = self.get_number_of_completed_subgoals(state)
 		#print cost,len(state)
 		#self.estimated_dist_to_goal = cost# + self.heuristic()
 		return cost# + self.heuristic())
-
 
 	def create_child_states(self):
 		for action in self.domainclass.actions:
@@ -209,22 +223,23 @@ class State:
 				# print goal==state,goal,state
 
 	def is_goal_state_external(self,state):
+		return self.get_number_of_completed_subgoals(state)==len(self.goal)
 		#result =  all(elem in self.goal  for elem in state)
-		found_goal = False
-		for goals in self.goal:
-			found_goal = False
-			for states in state:
-				if goals==states:
-					found_goal = True
-					break
-			if not found_goal:
-				return False
-		return result
+		# found_goal = False
+		# for goals in self.goal:
+		# 	found_goal = False
+		# 	for states in state:
+		# 		if goals==states:
+		# 			found_goal = True
+		# 			break
+		# 	if not found_goal:
+		# 		return False
+		# return result
 
 	def get_number_of_completed_subgoals(self,states):
 		compl = 0
-		for state in states:
-			if state in self.goal:
+		for goal in self.goal:
+			if goal in states:
 				compl = compl + 1
 		return compl
 
