@@ -35,7 +35,7 @@ class State:
 			self.depth 		= self.parent.depth + 1
 
 
-			#self.state.extend(action.get_addlist(action_parameters))
+			# self.state.extend(action.get_addlist(action_parameters))
 
 			for item in action.get_addlist(action_parameters):
 				if item not in self.state:
@@ -106,8 +106,8 @@ class State:
 
 
 			#print cost,len(state)#,state
-			if 	previous_lenght_state == len(state):
-				return cost
+			if	previous_lenght_state == len(state):
+				return depth*len(self.state)
 				#raise ValueError('Error: Problem not solvable')
 			previous_lenght_state = len(state)
 

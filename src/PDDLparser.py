@@ -34,7 +34,9 @@ def a_star_solve(initial_state):
 
 		if possible_solution.is_goal_state():
 			print '\n\n----------Solution found!---------------\n'
-			print 'The goal state is:\n',possible_solution.state
+			print 'The state is:\n',possible_solution.state
+			print '\n\nThe goal was:'
+			for goal in possible_solution.goal: print goal
 			print '\nLength of solution: ',len(possible_solution.actions)
 			print '\nThe solution is: '
 			for action in possible_solution.actions:
@@ -75,14 +77,14 @@ def main():
 	dir_path = dir_path[:-3]
 
 	debug = False
-	# debug = True
+	debug = True
 
 
 
-	#satellite problem.
+	# satellite problem.
 	# domain_file_name = dir_path+'probs/satellite/domain.pddl'
 	# problem_file_name = dir_path+'probs/satellite/problem01.pddl'
-	#
+
 	# #
 	# #Block world problem quick enough
 	# problem_file_name = dir_path+'probs/blocks/problem.pddl'
@@ -94,13 +96,19 @@ def main():
 	# domain_file_name = dir_path+'probs/aircargo/domain.pddl'
 	#
 	#
-	# # # #
+	# # # # Shakey
 	# problem_file_name = dir_path+'probs/shakey/problem1.pddl'
 	# domain_file_name = dir_path+'probs/shakey/domain.pddl'
 	# # # #
- 	# # # # # #Rover
-	problem_file_name = dir_path+'probs/rover/problem.pddl'
-	domain_file_name = dir_path+'probs/rover/domain.pddl'
+
+ 	# # # #Rover1
+	# problem_file_name = dir_path+'probs/rover/problem.pddl'
+	# domain_file_name = dir_path+'probs/rover/domain.pddl'
+
+
+ 	# # # #Rover2
+	problem_file_name = dir_path+'probs/rover2/problem.pddl'
+	domain_file_name = dir_path+'probs/rover2/domain.pddl'
 
 
 	domain_file = open(domain_file_name,'r')
@@ -118,6 +126,34 @@ def main():
 			pr = cProfile.Profile()
 			pr.enable()
 
+		if debug:
+			print "\n\nDomain name: ",domain.domain_name
+			for predicate in domain.predicates:
+				print "Predicate: ",predicate.name,predicate.parameters
+
+			for action in domain.actions:
+				print "\n\nAction name:",action.name
+				print "Parameters:", action.parameters
+				for precondition in action.preconditions:
+					print "Precondition: ",precondition.name,precondition.parameters
+
+				for effect in action.effects:
+					print "Effect: ",effect.name, effect.parameters
+				for delete_effect in action.delete_effects:
+					print "Delete effect: ",delete_effect.name,delete_effect.parameters
+
+
+			print '\n----------Objects-----------------'
+			for obj in init_state.objects:
+				print obj
+			print '\n-------INIT STATE-----------'
+			for state in init_state.state:
+				print state
+
+			print '\n-------Goal-----------'
+			for goal in init_state.goal:
+				print goal
+
 		a_star_solve(init_state)
 
 		if profiling:
@@ -133,43 +169,6 @@ def main():
 		print("--- %s seconds ---" % (time.time() - start_time))
 
 
-		if debug:
-			print "\n\nDomain name: ",domain.domain_name
-			for predicate in domain.predicates:
-				print "\n------------------------------"
-				print "Predicate name: ",predicate.name
-				print "Predicate params: ",predicate.parameters
-				print "------------------------------\n"
-
-			for action in domain.actions:
-				print "\n\n------Action name: ",action.name,"-------------"
-				print "Parameters:", action.parameters
-				for precondition in action.preconditions:
-					print "------------------------------"
-					print "Precondition name: ",precondition.name
-					print "Precondition param: ",precondition.parameters
-					print "------------------------------\n"
-				for effect in action.effects:
-					print "------------------------------"
-					print "Effect name: ",effect.name
-					print "Effect params: ", effect.parameters
-					print "------------------------------\n"
-				for delete_effect in action.delete_effects:
-					print "------------------------------"
-					print "Delete effect name: ",delete_effect.name
-					print "Delete effect params: ", delete_effect.parameters
-					print "------------------------------\n"
-
-			print '\n----------Objects-----------------'
-			for obj in init_state.objects:
-				print obj
-			print '\n-------INIT STATE-----------'
-			for state in init_state.state:
-				print state
-
-			print '\n-------Goal-----------'
-			for goal in init_state.goal:
-				print goal
 
 	except ValueError as err:
 		print '------------------'
