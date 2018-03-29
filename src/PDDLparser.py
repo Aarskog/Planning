@@ -28,7 +28,7 @@ def a_star_solve(initial_state):
 		if possible_solution.depth > deepest:
 			deepest = possible_solution.depth
 
-		print 'states visited:',i,' len queue:',len(heap),' depth:',possible_solution.depth,deepest,\
+		print 'Visited:',i,' len queue:',len(heap),' depth:',possible_solution.depth,deepest,\
 		' New states:',new_states_inserted,' State cost: ',possible_solution.cost,\
 		' Dist goal: ',possible_solution.estimated_dist_to_goal,lowest_dist#,len(possible_solution.state)
 
@@ -83,24 +83,24 @@ def main():
 	domain_file_name = dir_path+'probs/satellite/domain.pddl'
 	problem_file_name = dir_path+'probs/satellite/problem01.pddl'
 
+	#
+	#Block world problem quick enough
+	problem_file_name = dir_path+'probs/blocks/problem.pddl'
+	domain_file_name = dir_path+'probs/blocks/domain.pddl'
 
-	# # #Block world problem quick enough
-	# problem_file_name = dir_path+'probs/blocks/problem.pddl'
-	# domain_file_name = dir_path+'probs/blocks/domain.pddl'
 
-
-	# #aircargo problem
+	# # #aircargo problem
 	problem_file_name = dir_path+'probs/aircargo/problem.pddl'
 	domain_file_name = dir_path+'probs/aircargo/domain.pddl'
 
-	# #
-	# Shakey cant solve
-	# problem_file_name = dir_path+'probs/shakey/problem1.pddl'
-	# domain_file_name = dir_path+'probs/shakey/domain.pddl'
-	# #
- 	# # # #Rover
-	# problem_file_name = dir_path+'probs/rover/problem.pddl'
-	# domain_file_name = dir_path+'probs/rover/domain.pddl'
+
+	# # 
+	problem_file_name = dir_path+'probs/shakey/problem1.pddl'
+	domain_file_name = dir_path+'probs/shakey/domain.pddl'
+	#
+ 	# # # # #Rover
+	problem_file_name = dir_path+'probs/rover/problem.pddl'
+	domain_file_name = dir_path+'probs/rover/domain.pddl'
 
 
 	domain_file = open(domain_file_name,'r')
@@ -159,6 +159,17 @@ def main():
 					print "Delete effect name: ",delete_effect.name
 					print "Delete effect params: ", delete_effect.parameters
 					print "------------------------------\n"
+
+			print '\n----------Objects-----------------'
+			for obj in init_state.objects:
+				print obj
+			print '\n-------INIT STATE-----------'
+			for state in init_state.state:
+				print state
+
+			print '\n-------Goal-----------'
+			for goal in init_state.goal:
+				print goal
 
 	except ValueError as err:
 		print '------------------'

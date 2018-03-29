@@ -24,7 +24,7 @@ class State:
 
 		if not parent_state:
 			self.parse(problem_file)
-			self.cost = self.ff_heuristic()
+			self.cost = self.heuristic()
 
 		else:
 			self.actions 	= copy.copy(parent_state.actions)
@@ -35,7 +35,12 @@ class State:
 			self.depth 		= self.parent.depth + 1
 
 
-			self.state.extend(action.get_addlist(action_parameters))
+			#self.state.extend(action.get_addlist(action_parameters))
+
+			for item in action.get_addlist(action_parameters):
+				if item not in self.state:
+					self.state.append(item)
+
 			self.objects 	= parent_state.objects
 
 			delete_list 	= action.get_deletelist(action_parameters)
@@ -45,9 +50,15 @@ class State:
 		self.state = sorted(self.state)
 
 	def set_state_cost(self):
-		self.cost = self.ff_heuristic() + self.depth
+		self.cost = self.heuristic() + 0.1*self.depth
 
 	def heuristic(self):
+		#self.estimated_dist_to_goal = (self.ff_heuristic() + self.missing_goal_states_heuristic())
+		self.estimated_dist_to_goal = self.missing_goal_states_heuristic()
+		#self.estimated_dist_to_goal = self.hsp_heuristic()
+		return 1*self.estimated_dist_to_goal
+
+	def missing_goal_states_heuristic(self):
 		dist_to_goal = 0
 		#print 'p ness'
 		# print len(self.state)
@@ -62,9 +73,9 @@ class State:
 				dist_to_goal += 1
 		# print dist_to_goal
 		self.estimated_dist_to_goal = dist_to_goal
-		return 1*dist_to_goal
+		return dist_to_goal
 
-	def ff_heuristic(self):
+	def hsp_heuristic(self):
 		state = self.state[:]
 		cost = 0
 		previous_lenght_state = len(state)
@@ -83,13 +94,13 @@ class State:
 					state.append(add_state)
 			#print cost,len(state)#,state
 			if 	previous_lenght_state == len(state):
-				a=1
+				return cost
 				#raise ValueError('Error: Problem not solvable')
 			previous_lenght_state = len(state)
 
-			#print cost,len(state)
-		self.estimated_dist_to_goal = cost + self.heuristic()
-		return 10*(cost + self.heuristic())
+		#print cost,len(state)
+		#self.estimated_dist_to_goal = cost# + self.heuristic()
+		return cost# + self.heuristic())
 
 
 	def create_child_states(self):
@@ -181,24 +192,25 @@ class State:
 				i=i+1
 
 	def is_goal_state(self):
-		found_goal = False
+		return self.get_number_of_completed_subgoals(self.state)==len(self.goal)
+		# found_goal = False
+		#
+		# for goals in self.goal:
+		# 	found_goal = False
+		# 	for state in self.state:
+		# 		if goals==state:
+		# 			found_goal = True
+		# 			break
+		# 	if not found_goal:
+		# 		return False
+		#
 
-		for goals in self.goal:
-			found_goal = False
-			for state in self.state:
-				if goals==state:
-					found_goal = True
-					break
-			if not found_goal:
-				return False
-
-
-		return True
+		# return True
 				# print goal==state,goal,state
 
 	def is_goal_state_external(self,state):
+		#result =  all(elem in self.goal  for elem in state)
 		found_goal = False
-
 		for goals in self.goal:
 			found_goal = False
 			for states in state:
@@ -207,7 +219,15 @@ class State:
 					break
 			if not found_goal:
 				return False
-		return True
+		return result
+
+	def get_number_of_completed_subgoals(self,states):
+		compl = 0
+		for state in states:
+			if state in self.goal:
+				compl = compl + 1
+		return compl
+
 
 	def get_cost(self):
 		return self.cost

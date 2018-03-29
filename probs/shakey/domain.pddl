@@ -5,6 +5,7 @@
   (:predicates
     (is-room ?room)
     (is-lit ?room)
+		(is-dark ?room)
 
     (is-tiny-door ?door)
     (is-wide-door ?door)
@@ -24,7 +25,11 @@
 
     (is-box ?big-box)
 
-    (is-in ?any-objects ?room))
+    (is-in ?any-objects ?room)
+
+
+
+		)
 
   (:action shakey_changes_room
     :parameters (?shak ?room-a ?room-b ?door)
@@ -60,6 +65,7 @@
       (is-shakey ?shak)(is-in ?shak ?room)
       (is-box ?box)(is-in ?box ?room)
       (is-room ?room)
+			(is-dark ?room)
       )
     :effect (is-lit ?room))
 
@@ -70,7 +76,8 @@
       (is-box ?box)(is-in ?box ?room)
       (is-room ?room)
       (is-lit ?room))
-    :effect (not (is-lit ?room) ))
+    :effect (not (is-lit ?room))
+		(is-dark ?room))
 
   (:action shakey_picks_small_obj_in_gripper
     :parameters (?shak ?grip ?obj ?room)
