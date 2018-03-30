@@ -202,7 +202,6 @@ class Action:
 			if len(temp_combinations) == self.num_parameters and temp_combinations not in combinations:
 				combinations.append(temp_combinations)
 
-
 def removekey(d, key):
     r = dict(d)
     del r[key]

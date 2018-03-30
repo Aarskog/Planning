@@ -77,38 +77,39 @@ def main():
 	dir_path = dir_path[:-3]
 
 	debug = False
-	debug = True
+	# debug = True
 
 
 
 	# satellite problem.
 	# domain_file_name = dir_path+'probs/satellite/domain.pddl'
 	# problem_file_name = dir_path+'probs/satellite/problem01.pddl'
-
+	# # # #
 	# #
-	# #Block world problem quick enough
+	# # #Block world
 	# problem_file_name = dir_path+'probs/blocks/problem.pddl'
 	# domain_file_name = dir_path+'probs/blocks/domain.pddl'
 	#
-	#
+
 	# # # #aircargo problem
 	# problem_file_name = dir_path+'probs/aircargo/problem.pddl'
 	# domain_file_name = dir_path+'probs/aircargo/domain.pddl'
-	#
-	#
-	# # # # Shakey
-	# problem_file_name = dir_path+'probs/shakey/problem1.pddl'
-	# domain_file_name = dir_path+'probs/shakey/domain.pddl'
-	# # # #
 
- 	# # # #Rover1
+
+	# # # # Shakey
+	problem_file_name = dir_path+'probs/shakey/problem1.pddl'
+	domain_file_name = dir_path+'probs/shakey/domain.pddl'
+	# #
+
+ 	# # # # # #Rover1
 	# problem_file_name = dir_path+'probs/rover/problem.pddl'
 	# domain_file_name = dir_path+'probs/rover/domain.pddl'
 
 
- 	# # # #Rover2
-	problem_file_name = dir_path+'probs/rover2/problem.pddl'
-	domain_file_name = dir_path+'probs/rover2/domain.pddl'
+ 	# # # # # # #Rover2
+	# problem_file_name = dir_path+'probs/rover2/problem.pddl'
+	# domain_file_name = dir_path+'probs/rover2/domain.pddl'
+
 
 
 	domain_file = open(domain_file_name,'r')

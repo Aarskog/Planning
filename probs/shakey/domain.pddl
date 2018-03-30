@@ -67,7 +67,7 @@
       (is-room ?room)
 			(is-dark ?room)
       )
-    :effect (is-lit ?room))
+    :effect (and (is-lit ?room) (not (is-dark ?room))))
 
   (:action shakey_turns_lights_off
     :parameters (?shak ?box ?room)
@@ -76,8 +76,8 @@
       (is-box ?box)(is-in ?box ?room)
       (is-room ?room)
       (is-lit ?room))
-    :effect (not (is-lit ?room))
-		(is-dark ?room))
+    :effect (and (not (is-lit ?room))
+		(is-dark ?room)))
 
   (:action shakey_picks_small_obj_in_gripper
     :parameters (?shak ?grip ?obj ?room)

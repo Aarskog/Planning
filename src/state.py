@@ -50,7 +50,7 @@ class State:
 		self.state = sorted(self.state)
 
 	def set_state_cost(self):
-		self.cost = self.heuristic() + 0.2*self.depth
+		self.cost =  self.heuristic() + 0.01*self.depth
 
 	def heuristic(self):
 		#self.estimated_dist_to_goal = self.hsp_heuristic() + self.missing_goal_states_heuristic()
