@@ -24,8 +24,6 @@ class State:
 		self.vertex 			= 0
 		self.edge 				= 0
 
-		self.vertex2 = None
-		self.edge2 = None
 
 		if not parent_state:
 			self.parse(problem_file)
@@ -61,7 +59,7 @@ class State:
 		#self.estimated_dist_to_goal = self.hsp_heuristic() + self.missing_goal_states_heuristic()
 		#self.estimated_dist_to_goal = self.missing_goal_states_heuristic()
 		self.estimated_dist_to_goal = self.hsp_heuristic()
-		return self.estimated_dist_to_goal
+		return  self.estimated_dist_to_goal
 
 	def missing_goal_states_heuristic(self):
 		dist_to_goal = 0
@@ -253,11 +251,9 @@ class State:
 
 	def set_vertex(self):
 		self.vertex = self.domainclass.graph.add_vertex()
-		self.vertex2  = self.domainclass.Graph.add_node(tuple(self.state))
 
-	def set_edge(self,vertex,parent):
+	def set_edge(self,vertex):
 		self.edge = self.domainclass.graph.add_edge(vertex,self.vertex)
-		self.edge2 = self.domainclass.Graph.add_edge(tuple(parent.state),tuple(self.state))
 
 	def __cmp__(self, other):
 		#Used for heap sort

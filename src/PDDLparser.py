@@ -73,8 +73,7 @@ def a_star_solve(initial_state,domain):
 
 					# new_state_v = g.add_vertex()
 					new_state.set_vertex()
-					new_state.set_edge(possible_solution.vertex,possible_solution)
-					#e = domain.graph.add_edge(possible_solution.vertex,new_state.vertex)
+					new_state.set_edge(possible_solution.vertex)
 
 					new_state.set_state_cost()
 					#Add the new state to visited states
@@ -93,7 +92,6 @@ def a_star_solve(initial_state,domain):
 	print '---NOT SOLVABLE---'
 	print 'Nodes visited = ',i
 
-
 def highlight_solution(state,ecolor,ewidth):
 	if state.parent:
 		ecolor[state.edge] = '#a40000'
@@ -108,7 +106,6 @@ def print_graph(g,goal_state):
 	touch_v = g.new_vertex_property("bool")
 	touch_e = g.new_edge_property("bool")
 	ecolor = g.new_edge_property("string")
- 	#ecolor = "#3465a4"
 	ewidth = g.new_edge_property("double")
 	ewidth.a = 0.4
 
@@ -116,13 +113,8 @@ def print_graph(g,goal_state):
 		ecolor[e] = "#3465a4"
 
 	highlight_solution(goal_state,ecolor,ewidth)
-	#print vlist
 
-	# for e in vlist:
-	# 	ecolor[e] = "#a40000"
-	# 	ewidth[e] = 3
-	#pos = fruchterman_reingold_layout(g, n_iter=1000)#GOOD
-	pos = radial_tree_layout(g, g.vertex(0))
+	pos = fruchterman_reingold_layout(g, n_iter=1000)#GOOD
 	graph_draw(g, vertex_fill_color="#000000",pos=pos, \
                #vcmap=matplotlib.cm.binary, \
                edge_pen_width=ewidth, edge_color=ecolor,vertex_size=3,\
@@ -144,7 +136,7 @@ def main():
 	# satellite problem. shortest solution = 9
 	# domain_file_name = dir_path+'probs/satellite/domain.pddl'
 	# problem_file_name = dir_path+'probs/satellite/problem01.pddl'
-	# #
+	# # #
 	# #
 	# # #Block world
 	# problem_file_name = dir_path+'probs/blocks/problem.pddl'
@@ -152,13 +144,13 @@ def main():
 
 
 	# # # #aircargo problem shortest solution = 6
-	# problem_file_name = dir_path+'probs/aircargo/problem.pddl'
-	# domain_file_name = dir_path+'probs/aircargo/domain.pddl'
+	problem_file_name = dir_path+'probs/aircargo/problem.pddl'
+	domain_file_name = dir_path+'probs/aircargo/domain.pddl'
 
 
 	# # # # Shakey shortest solution = 22      HSP A* = 26
-	problem_file_name = dir_path+'probs/shakey/problem1.pddl'
-	domain_file_name = dir_path+'probs/shakey/domain.pddl'
+	# problem_file_name = dir_path+'probs/shakey/problem1.pddl'
+	# domain_file_name = dir_path+'probs/shakey/domain.pddl'
 	# #
 
  	# # # # # # #Rover1 # shortest solution = 53
@@ -178,8 +170,7 @@ def main():
 
 	try:
 		g = Graph()
-		G = nx.DiGraph()
-		domain = dom.Domain(domain_file,g,G)
+		domain = dom.Domain(domain_file,g)
 		init_state = st.State(domainclass = domain,problem_file=problem_file)
 
 		start_time = time.time()

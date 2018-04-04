@@ -243,9 +243,8 @@ class Domain:
 	requirements = []
 	predicates = []
 	actions = []
-	def __init__(self,domain_file,g,G):
+	def __init__(self,domain_file,g):
 		self.graph = g
-		self.Graph = G
 		self.parse(domain_file)
 
 	def parse(self,file):
