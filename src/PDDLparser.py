@@ -5,7 +5,6 @@ from heapq import heappush
 from heapq import heappop
 import time
 
-import cProfile, pstats, StringIO
 
 def a_star_solve(initial_state):
 
