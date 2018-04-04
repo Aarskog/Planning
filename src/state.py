@@ -21,10 +21,15 @@ class State:
 		self.actions 			= []
 		self.estimated_dist_to_goal = 0
 		self.parent 			= parent_state
+		self.vertex 			= 0
+		self.edge 				= 0
+
+		self.vertex2 = None
+		self.edge2 = None
 
 		if not parent_state:
 			self.parse(problem_file)
-			self.cost = self.heuristic()
+			self.cost = self.set_state_cost()
 
 		else:
 			self.actions 	= copy.copy(parent_state.actions)
@@ -50,13 +55,13 @@ class State:
 		self.state = sorted(self.state)
 
 	def set_state_cost(self):
-		self.cost =  self.heuristic() + 0.01*self.depth
+		self.cost =  1*self.heuristic() + 0.01*self.depth
 
 	def heuristic(self):
 		#self.estimated_dist_to_goal = self.hsp_heuristic() + self.missing_goal_states_heuristic()
 		#self.estimated_dist_to_goal = self.missing_goal_states_heuristic()
 		self.estimated_dist_to_goal = self.hsp_heuristic()
-		return 1*self.estimated_dist_to_goal
+		return self.estimated_dist_to_goal
 
 	def missing_goal_states_heuristic(self):
 		dist_to_goal = 0
@@ -243,9 +248,16 @@ class State:
 				compl = compl + 1
 		return compl
 
-
 	def get_cost(self):
 		return self.cost
+
+	def set_vertex(self):
+		self.vertex = self.domainclass.graph.add_vertex()
+		self.vertex2  = self.domainclass.Graph.add_node(tuple(self.state))
+
+	def set_edge(self,vertex,parent):
+		self.edge = self.domainclass.graph.add_edge(vertex,self.vertex)
+		self.edge2 = self.domainclass.Graph.add_edge(tuple(parent.state),tuple(self.state))
 
 	def __cmp__(self, other):
 		#Used for heap sort

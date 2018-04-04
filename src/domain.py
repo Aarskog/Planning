@@ -1,5 +1,6 @@
 import copy
 
+
 class Action:
 	def __init__(self,action):
 		self.action_name = ''
@@ -165,7 +166,7 @@ class Action:
 
 	def recursive_get_combo(self,combinations,precondition_matches,temp_combinations):
 		'''
-		get possible combinations of objects based on predonditions and states
+		get possible combinations of objects based on predonditions and state
 		'''
 
 		if precondition_matches:# and len(temp_combinations) < self.num_parameters:
@@ -242,7 +243,9 @@ class Domain:
 	requirements = []
 	predicates = []
 	actions = []
-	def __init__(self,domain_file):
+	def __init__(self,domain_file,g,G):
+		self.graph = g
+		self.Graph = G
 		self.parse(domain_file)
 
 	def parse(self,file):

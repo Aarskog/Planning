@@ -4,10 +4,17 @@ import os
 from heapq import heappush
 from heapq import heappop
 import time
+from graph_tool.all import *
+import matplotlib
+import networkx as nx
+import matplotlib.pyplot as plt
 
+import numpy as np
 import cProfile, pstats, StringIO
 
-def a_star_solve(initial_state):
+def a_star_solve(initial_state,domain):
+
+	initial_state.set_vertex()
 
 	heap = []
 
@@ -23,6 +30,10 @@ def a_star_solve(initial_state):
 		#Get the state with the lowest cost from the heap
 		possible_solution = heappop(heap)
 
+		# possible_solution_v = g.add_vertex()
+
+
+
 		if possible_solution.estimated_dist_to_goal < lowest_dist:
 			lowest_dist = possible_solution.estimated_dist_to_goal
 		if possible_solution.depth > deepest:
@@ -34,13 +45,19 @@ def a_star_solve(initial_state):
 
 		if possible_solution.is_goal_state():
 			print '\n\n----------Solution found!---------------\n'
-			print 'The state is:\n',possible_solution.state
+			print 'The state is:\n'
+			for st in possible_solution.state: print st
 			print '\n\nThe goal was:'
 			for goal in possible_solution.goal: print goal
 			print '\nLength of solution: ',len(possible_solution.actions)
 			print '\nThe solution is: '
 			for action in possible_solution.actions:
 				print action
+			print_graph(domain.graph,possible_solution)
+			#nx.draw_graphviz(domain.Graph)
+			#plt.show()
+
+
 
 			return
 
@@ -53,6 +70,12 @@ def a_star_solve(initial_state):
 
 				#check if the state already has been visited using hash table
 				if not tuple(new_state.state) in visited_states:
+
+					# new_state_v = g.add_vertex()
+					new_state.set_vertex()
+					new_state.set_edge(possible_solution.vertex,possible_solution)
+					#e = domain.graph.add_edge(possible_solution.vertex,new_state.vertex)
+
 					new_state.set_state_cost()
 					#Add the new state to visited states
 					visited_states[tuple(new_state.state)] = True
@@ -71,6 +94,43 @@ def a_star_solve(initial_state):
 	print 'Nodes visited = ',i
 
 
+def highlight_solution(state,ecolor,ewidth):
+	if state.parent:
+		ecolor[state.edge] = '#a40000'
+		ewidth[state.edge] = 1
+		highlight_solution(state.parent,ecolor,ewidth)
+
+def print_graph(g,goal_state):
+	vlist = shortest_distance(g, source=g.vertex(0),target=goal_state.vertex)
+	#graph_tool.topology.mark_subgraph(g, sub,1)
+
+
+	touch_v = g.new_vertex_property("bool")
+	touch_e = g.new_edge_property("bool")
+	ecolor = g.new_edge_property("string")
+ 	#ecolor = "#3465a4"
+	ewidth = g.new_edge_property("double")
+	ewidth.a = 0.4
+
+	for e in g.edges():
+		ecolor[e] = "#3465a4"
+
+	highlight_solution(goal_state,ecolor,ewidth)
+	#print vlist
+
+	# for e in vlist:
+	# 	ecolor[e] = "#a40000"
+	# 	ewidth[e] = 3
+	#pos = fruchterman_reingold_layout(g, n_iter=1000)#GOOD
+	pos = radial_tree_layout(g, g.vertex(0))
+	graph_draw(g, vertex_fill_color="#000000",pos=pos, \
+               #vcmap=matplotlib.cm.binary, \
+               edge_pen_width=ewidth, edge_color=ecolor,vertex_size=3,\
+			    output="asta.pdf")
+
+	#graph_draw(g, vertex_text=g.vertex_index,output_size=(2000, 2000), output="two-nodes.pdf")
+
+
 def main():
 
 	dir_path = os.path.dirname(os.path.realpath(__file__))
@@ -81,34 +141,35 @@ def main():
 
 
 
-	# satellite problem.
+	# satellite problem. shortest solution = 9
 	# domain_file_name = dir_path+'probs/satellite/domain.pddl'
 	# problem_file_name = dir_path+'probs/satellite/problem01.pddl'
-	# # # #
+	# #
 	# #
 	# # #Block world
 	# problem_file_name = dir_path+'probs/blocks/problem.pddl'
 	# domain_file_name = dir_path+'probs/blocks/domain.pddl'
-	#
 
-	# # # #aircargo problem
+
+	# # # #aircargo problem shortest solution = 6
 	# problem_file_name = dir_path+'probs/aircargo/problem.pddl'
 	# domain_file_name = dir_path+'probs/aircargo/domain.pddl'
 
 
-	# # # # Shakey
+	# # # # Shakey shortest solution = 22      HSP A* = 26
 	problem_file_name = dir_path+'probs/shakey/problem1.pddl'
 	domain_file_name = dir_path+'probs/shakey/domain.pddl'
 	# #
 
- 	# # # # # #Rover1
+ 	# # # # # # #Rover1 # shortest solution = 53
 	# problem_file_name = dir_path+'probs/rover/problem.pddl'
 	# domain_file_name = dir_path+'probs/rover/domain.pddl'
 
 
- 	# # # # # # #Rover2
+ 	# # # # # #Rover2 shortest solution = 10
 	# problem_file_name = dir_path+'probs/rover2/problem.pddl'
 	# domain_file_name = dir_path+'probs/rover2/domain.pddl'
+
 
 
 
@@ -116,7 +177,9 @@ def main():
 	problem_file = open(problem_file_name,'r')
 
 	try:
-		domain = dom.Domain(domain_file)
+		g = Graph()
+		G = nx.DiGraph()
+		domain = dom.Domain(domain_file,g,G)
 		init_state = st.State(domainclass = domain,problem_file=problem_file)
 
 		start_time = time.time()
@@ -155,7 +218,7 @@ def main():
 			for goal in init_state.goal:
 				print goal
 
-		a_star_solve(init_state)
+		a_star_solve(init_state,domain)
 
 		if profiling:
 			pr.disable()
