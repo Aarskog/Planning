@@ -3,9 +3,11 @@ import copy
 import random
 from heapq import heappush
 from heapq import heappop
+import time
+import matplotlib.pyplot as plt
 '''
 Solves the 3X3 sliding block puzzle using A* algorithm with the Manhattan
-distance heuristic
+distance as a heuristic
 '''
 
 class board:
@@ -17,22 +19,24 @@ class board:
 	depth = 0 #Distance from the initial node to current node
 	def __init__(self,parent_board = None, action=None):
 		a=1
+		boardsize = 3
 		self.action = action
 		self.parent_board = parent_board
 
 		if parent_board is None:
 			#First board, intitialize with a random board
-			self.board = np.array(np.reshape(random.sample(range(self.boardsize**2), self.boardsize**2),(-1,self.boardsize)))
-
-			# #There are 9! different boards in a 3X3 board. Only half of them are solvable
-			while not self.is_solvable():
-				self.board = np.array(np.reshape(random.sample(range(self.boardsize**2), self.boardsize**2),(-1,self.boardsize)))
-			self.board = np.array([[8,6,7],[2,5,4],[3,0,1]])#29 moves
+			# self.board = np.array(np.reshape(random.sample(range(self.boardsize**2), self.boardsize**2),(-1,self.boardsize)))
+			#
+			# # #There are 9! different boards in a 3X3 board. Only half of them are solvable
+			# while self.is_solvable():
+			# 	self.board = np.array(np.reshape(random.sample(range(self.boardsize**2), self.boardsize**2),(-1,self.boardsize)))
+			#self.board = np.array([[8,6,7],[2,5,4],[3,0,1]])#29 moves
+			self.board = np.array(np.reshape(range(boardsize**2),(-1,boardsize)))
 			self.dist_to_goal = self.h_manhattan_distance()
 			self.h = self.dist_to_goal
 
 		else:
-			self.board =  copy.deepcopy(parent_board.board)
+			self.board =  copy.copy(parent_board.board)
 			self.do_action(action)
 
 			self.depth = parent_board.depth + 1
@@ -141,41 +145,55 @@ def solve(init_board):
 	#Make a table of visited nodes as a hash function for quick check of existence
 	visited = {tuple(init_board.board.data):True}
 
+	num_states = np.zeros(33)
+
 	i = 0
 	while heap:
 
 		possible_solution = heappop(heap)
-		print 'States visited:',i,' length queue:',len(heap),' depth:',possible_solution.depth,\
-		' State cost: ',possible_solution.h," Dist to goal: ",possible_solution.dist_to_goal
+		# print 'States visited:',i,' length queue:',len(heap),' depth:',possible_solution.depth,\
+		# ' State cost: ',possible_solution.h," Dist to goal: ",possible_solution.dist_to_goal
+		if possible_solution.depth >= 33:
+			print possible_solution.board
 		i = i + 1
 
-		if possible_solution.is_solved():
-			print '\n\n Solution:'
-			path = []
-			possible_solution.get_path(path)
-			init_board.execute_path(path)
-			print '\nSolved'
-			print 'Nodes visited = ',i
-			print 'Num actions = ',possible_solution.depth
-			print "Solution=\n",path
+		# if possible_solution.is_solved():
+		# 	print '\n\n Solution:'
+		# 	path = []
+		# 	possible_solution.get_path(path)
+		# 	init_board.execute_path(path)
+		# 	print '\nSolved'
+		# 	print 'Nodes visited = ',i
+		# 	print 'Num actions = ',possible_solution.depth
+		# 	print "Solution=\n",path
+		#
+		# 	return path
+		#
+		#
+		# else:
 
-			return path
+		new_nodes = possible_solution.possible_actions()
+
+		for new_node in new_nodes:
+
+			if not  tuple(new_node.board.data) in visited:
+				num_states[new_node.depth] += 1
+				visited[tuple(new_node.board.data)]=True
+
+				#Insert into heap
+				heappush(heap,new_node)
 
 
-		else:
+	indexes = np.arange(len(num_states))
+	fig = plt.figure()
+	plt.bar(indexes,num_states,1)
+	plt.xlabel('Number of actions', fontsize=18)
+	plt.ylabel('Number of boards', fontsize=16)
+	fig.savefig('histSlidingblock.svg')
+	plt.show()
+	#plt.xticks(indexes + 1 * 0.5, labels)
 
-			new_nodes = possible_solution.possible_actions()
-
-			for new_node in new_nodes:
-
-				if not  tuple(new_node.board.data) in visited:
-
-					visited[tuple(new_node.board.data)]=True
-
-					#Insert into heap
-					heappush(heap,new_node)
-
-
+	plt.show()
 	print '---NOT SOLVABLE---'
 	print 'Nodes visited = ',i
 	return []
@@ -183,7 +201,9 @@ def solve(init_board):
 def main():
 	board_to_solve = board()
 	print 'Board =\n', board_to_solve.board
+	start_time = time.time()
 	solve(board_to_solve)
+	print("--- %s seconds ---" % (time.time() - start_time))
 
 if __name__== "__main__":
 	main()

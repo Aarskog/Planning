@@ -95,7 +95,7 @@ def a_star_solve(initial_state,domain):
 def highlight_solution(state,ecolor,ewidth):
 	if state.parent:
 		ecolor[state.edge] = '#a40000'
-		ewidth[state.edge] = 1
+		ewidth[state.edge] = 2.5
 		highlight_solution(state.parent,ecolor,ewidth)
 
 def print_graph(g,goal_state):
@@ -107,7 +107,7 @@ def print_graph(g,goal_state):
 	touch_e = g.new_edge_property("bool")
 	ecolor = g.new_edge_property("string")
 	ewidth = g.new_edge_property("double")
-	ewidth.a = 0.4
+	ewidth.a = 0.9
 
 	for e in g.edges():
 		ecolor[e] = "#3465a4"
@@ -117,14 +117,15 @@ def print_graph(g,goal_state):
 	pos = fruchterman_reingold_layout(g, n_iter=1000)#GOOD
 	graph_draw(g, vertex_fill_color="#000000",pos=pos, \
                #vcmap=matplotlib.cm.binary, \
-               edge_pen_width=ewidth, edge_color=ecolor,vertex_size=3,\
-			    output="asta.pdf")
+               edge_pen_width=ewidth, edge_color=ecolor,vertex_size=4,\
+			    output="asta.svg")
 
 	#graph_draw(g, vertex_text=g.vertex_index,output_size=(2000, 2000), output="two-nodes.pdf")
 
 
 def main():
 
+	#Get path of source folder
 	dir_path = os.path.dirname(os.path.realpath(__file__))
 	dir_path = dir_path[:-3]
 
@@ -144,13 +145,13 @@ def main():
 
 
 	# # # #aircargo problem shortest solution = 6
-	problem_file_name = dir_path+'probs/aircargo/problem.pddl'
-	domain_file_name = dir_path+'probs/aircargo/domain.pddl'
+	# problem_file_name = dir_path+'probs/aircargo/problem.pddl'
+	# domain_file_name = dir_path+'probs/aircargo/domain.pddl'
 
 
 	# # # # Shakey shortest solution = 22      HSP A* = 26
-	# problem_file_name = dir_path+'probs/shakey/problem1.pddl'
-	# domain_file_name = dir_path+'probs/shakey/domain.pddl'
+	problem_file_name = dir_path+'probs/shakey/problem1.pddl'
+	domain_file_name = dir_path+'probs/shakey/domain.pddl'
 	# #
 
  	# # # # # # #Rover1 # shortest solution = 53
