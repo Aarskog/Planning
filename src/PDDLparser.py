@@ -17,6 +17,8 @@ def a_star_solve(initial_state):
 	new_states_inserted = 0
 	lowest_dist = float('inf')
 	deepest = 0
+
+
 	while heap:# and i < 1000 :
 
 		#Get the state with the lowest cost from the heap
@@ -40,7 +42,6 @@ def a_star_solve(initial_state):
 			print '\nThe solution is: '
 			for action in possible_solution.actions:
 				print action
-
 			return
 
 
@@ -68,6 +69,7 @@ def a_star_solve(initial_state):
 
 	print '---NOT SOLVABLE---'
 	print 'Nodes visited = ',i
+	print numsols
 
 
 def main():
@@ -81,14 +83,14 @@ def main():
 
 
 	# satellite problem.
-	# domain_file_name = dir_path+'probs/satellite/domain.pddl'
-	# problem_file_name = dir_path+'probs/satellite/problem01.pddl'
-	# # # #
+	domain_file_name = dir_path+'probs/satellite/domain.pddl'
+	problem_file_name = dir_path+'probs/satellite/problem01.pddl'
+	# # # # #
 	# #
 	# # #Block world
 	# problem_file_name = dir_path+'probs/blocks/problem.pddl'
 	# domain_file_name = dir_path+'probs/blocks/domain.pddl'
-	#
+	# #
 
 	# # # #aircargo problem
 	# problem_file_name = dir_path+'probs/aircargo/problem.pddl'
@@ -96,8 +98,8 @@ def main():
 
 
 	# # # # Shakey
-	problem_file_name = dir_path+'probs/shakey/problem1.pddl'
-	domain_file_name = dir_path+'probs/shakey/domain.pddl'
+	# problem_file_name = dir_path+'probs/shakey/problem1.pddl'
+	# domain_file_name = dir_path+'probs/shakey/domain.pddl'
 	# #
 
  	# # # # # #Rover1
