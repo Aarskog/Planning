@@ -114,11 +114,18 @@ def print_graph(g,goal_state):
 
 	highlight_solution(goal_state,ecolor,ewidth)
 
-	pos = fruchterman_reingold_layout(g, n_iter=1000)#GOOD
-	graph_draw(g, vertex_fill_color="#000000",pos=pos, \
+	#pos = sfdp_layout(g)
+	#pos[0] = (0,0)
+	pos = fruchterman_reingold_layout(g, n_iter=1000)#,pos=pos)#GOOD
+	#pos = sfdp_layout(g)
+
+	#pos[0] = (0,0)
+	graph_draw(g, vertex_fill_color="#000000",  pos=pos,\
                #vcmap=matplotlib.cm.binary, \
                edge_pen_width=ewidth, edge_color=ecolor,vertex_size=4,\
-			    output="asta.svg")
+			    output="img/WAstawrHSP.svg")
+
+	# graphviz_draw(g,output="img/graphviz-draw.svg",overlap=False)
 
 	#graph_draw(g, vertex_text=g.vertex_index,output_size=(2000, 2000), output="two-nodes.pdf")
 
@@ -150,13 +157,13 @@ def main():
 
 
 	# # # # Shakey shortest solution = 22      HSP A* = 26
-	problem_file_name = dir_path+'probs/shakey/problem1.pddl'
-	domain_file_name = dir_path+'probs/shakey/domain.pddl'
+	# problem_file_name = dir_path+'probs/shakey/problem1.pddl'
+	# domain_file_name = dir_path+'probs/shakey/domain.pddl'
 	# #
 
  	# # # # # # #Rover1 # shortest solution = 53
-	# problem_file_name = dir_path+'probs/rover/problem.pddl'
-	# domain_file_name = dir_path+'probs/rover/domain.pddl'
+	problem_file_name = dir_path+'probs/rover/problem.pddl'
+	domain_file_name = dir_path+'probs/rover/domain.pddl'
 
 
  	# # # # # #Rover2 shortest solution = 10
