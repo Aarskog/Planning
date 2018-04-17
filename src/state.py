@@ -55,8 +55,8 @@ class State:
 	def heuristic(self):
 		#self.estimated_dist_to_goal = self.hsp_heuristic() + self.missing_goal_states_heuristic()
 		#self.estimated_dist_to_goal = self.missing_goal_states_heuristic()
-		#self.estimated_dist_to_goal = self.hsp_heuristic()
-		return 0 # 1*self.estimated_dist_to_goal
+		self.estimated_dist_to_goal = self.hsp_heuristic()
+		return 1*self.estimated_dist_to_goal
 
 	def missing_goal_states_heuristic(self):
 		dist_to_goal = 0
@@ -71,6 +71,7 @@ class State:
 					break
 			if not found_goal:
 				dist_to_goal += 1
+				# print goals
 		# print dist_to_goal
 		self.estimated_dist_to_goal = dist_to_goal
 		return dist_to_goal
@@ -107,7 +108,8 @@ class State:
 
 			#print cost,len(state)#,state
 			if	previous_lenght_state == len(state):
-				return depth*len(self.state)
+				return depth*len(self.state)*10
+
 				#raise ValueError('Error: Problem not solvable')
 			previous_lenght_state = len(state)
 
@@ -260,10 +262,10 @@ def remove_white(arr):
 	arr = arr.replace('	','')
 	return arr
 
-def items_in_list_are_unique(items):
-	item_check_list = {}
-	for item in items:
-		if item in item_check_list:
-			return False
-		item_check_list[item]=True
-	return True
+# def items_in_list_are_unique(items):
+# 	item_check_list = {}
+# 	for item in items:
+# 		if item in item_check_list:
+# 			return False
+# 		item_check_list[item]=True
+# 	return True

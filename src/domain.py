@@ -179,7 +179,7 @@ class Action:
 					i = 1
 					temp_combinations_copy = temp_combinations.copy()
 					for obj in state[1:]:
-
+						# go = False
 						if not first_key_split[i] in temp_combinations_copy:
 							temp_combinations_copy[first_key_split[i]] = obj
 							go = True
@@ -189,10 +189,13 @@ class Action:
 							go = False
 							break
 
-
 						i = i + 1
+					#print temp_combinations_copy not in combinations
+					# if temp_combinations_copy in combinations:
+					# 	return
 					if go:
 						self.recursive_get_combo(combinations,removekey(precondition_matches,first_key),temp_combinations_copy)
+
 			else:
 				temp_combinations_copy = copy.copy(temp_combinations)
 				self.recursive_get_combo(combinations,removekey(precondition_matches,first_key),temp_combinations_copy)

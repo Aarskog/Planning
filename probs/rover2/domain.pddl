@@ -61,9 +61,10 @@
 (:action communicate_soil_data
  :parameters ( ?r ?l ?p ?x ?y)
  :precondition
-	(and (rover ?r) (lander ?l) (waypoint ?p) (waypoint ?x) (waypoint ?y)  (at ?r ?x) (at_lander ?l ?y) (have_soil_analysis ?r ?p) (visible ?x ?y) (available ?r) (channel_free ?l))
+	(and (rover ?r) (lander ?l) (waypoint ?p) (waypoint ?x) (waypoint ?y)  (at ?r ?x) (at_lander ?l ?y)
+	(have_soil_analysis ?r ?p) (visible ?x ?y) (available ?r) (channel_free ?l))
  :effect
-	(and (communicated_soil_data ?p) (available ?r) (not (available ?r))))
+	(and (communicated_soil_data ?p)))
 
 (:action communicate_rock_data
  :parameters ( ?r ?l ?p ?x ?y)

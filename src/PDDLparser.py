@@ -63,13 +63,16 @@ def a_star_solve(initial_state):
 					heappush(heap,new_state)
 
 
-
+		# possible_solution.missing_goal_states_heuristic()
+		# print '\n'
+		# for s in possible_solution.state:
+		# 	print s
 		i = i + 1
 
 
 	print '---NOT SOLVABLE---'
 	print 'Nodes visited = ',i
-	print numsols
+
 
 
 def main():
@@ -83,8 +86,8 @@ def main():
 
 
 	# satellite problem.
-	domain_file_name = dir_path+'probs/satellite/domain.pddl'
-	problem_file_name = dir_path+'probs/satellite/problem01.pddl'
+	# domain_file_name = dir_path+'probs/satellite/domain.pddl'
+	# problem_file_name = dir_path+'probs/satellite/problem01.pddl'
 	# # # # #
 	# #
 	# # #Block world
@@ -98,8 +101,8 @@ def main():
 
 
 	# # # # Shakey
-	# problem_file_name = dir_path+'probs/shakey/problem1.pddl'
-	# domain_file_name = dir_path+'probs/shakey/domain.pddl'
+	problem_file_name = dir_path+'probs/shakey/problem1.pddl'
+	domain_file_name = dir_path+'probs/shakey/domain.pddl'
 	# #
 
  	# # # # # #Rover1
