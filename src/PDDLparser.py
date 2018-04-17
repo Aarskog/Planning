@@ -114,16 +114,18 @@ def print_graph(g,goal_state):
 
 	highlight_solution(goal_state,ecolor,ewidth)
 
-	#pos = sfdp_layout(g)
-	#pos[0] = (0,0)
-	pos = fruchterman_reingold_layout(g, n_iter=1000)#,pos=pos)#GOOD
-	#pos = sfdp_layout(g)
+	for i in range(0,10):
+		print str(i)
+		pos = sfdp_layout(g)
+		pos[0] = (0,0)
+		pos = fruchterman_reingold_layout(g, n_iter=2000)#,pos=pos)#GOOD
+		#pos = sfdp_layout(g)
 
-	#pos[0] = (0,0)
-	graph_draw(g, vertex_fill_color="#000000",  pos=pos,\
-               #vcmap=matplotlib.cm.binary, \
-               edge_pen_width=ewidth, edge_color=ecolor,vertex_size=4,\
-			    output="img/WAstawrHSP.svg")
+		#pos[0] = (0,0)
+		graph_draw(g, vertex_fill_color="#000000",  pos=pos,\
+	               #vcmap=matplotlib.cm.binary, \
+	               edge_pen_width=ewidth, edge_color=ecolor,vertex_size=4,\
+				    output="img/WAstarRelaxShakey"+str(i)+".svg")
 
 	# graphviz_draw(g,output="img/graphviz-draw.svg",overlap=False)
 
@@ -144,7 +146,7 @@ def main():
 	# satellite problem. shortest solution = 9
 	# domain_file_name = dir_path+'probs/satellite/domain.pddl'
 	# problem_file_name = dir_path+'probs/satellite/problem01.pddl'
-	# # #
+	# #
 	# #
 	# # #Block world
 	# problem_file_name = dir_path+'probs/blocks/problem.pddl'
@@ -157,13 +159,13 @@ def main():
 
 
 	# # # # Shakey shortest solution = 22      HSP A* = 26
-	# problem_file_name = dir_path+'probs/shakey/problem1.pddl'
-	# domain_file_name = dir_path+'probs/shakey/domain.pddl'
+	problem_file_name = dir_path+'probs/shakey/problem1.pddl'
+	domain_file_name = dir_path+'probs/shakey/domain.pddl'
 	# #
 
  	# # # # # # #Rover1 # shortest solution = 53
-	problem_file_name = dir_path+'probs/rover/problem.pddl'
-	domain_file_name = dir_path+'probs/rover/domain.pddl'
+	# problem_file_name = dir_path+'probs/rover/problem.pddl'
+	# domain_file_name = dir_path+'probs/rover/domain.pddl'
 
 
  	# # # # # #Rover2 shortest solution = 10
