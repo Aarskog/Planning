@@ -73,8 +73,6 @@ def a_star_solve(initial_state):
 	print '---NOT SOLVABLE---'
 	print 'Nodes visited = ',i
 
-
-
 def main():
 
 	dir_path = os.path.dirname(os.path.realpath(__file__))
