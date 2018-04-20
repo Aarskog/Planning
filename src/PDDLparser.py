@@ -179,8 +179,7 @@ def main():
 			print arg
 		print '------------------'
 
-	domain_file.close()
-	problem_file.close()
+	
 
 if __name__=='__main__':
 	main()

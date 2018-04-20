@@ -247,6 +247,7 @@ class Domain:
 	actions = []
 	def __init__(self,domain_file):
 		self.parse(domain_file)
+		domain_file.close()
 
 	def parse(self,file):
 		current_element = ''

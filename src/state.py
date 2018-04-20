@@ -25,6 +25,7 @@ class State:
 		if not parent_state:
 			self.parse(problem_file)
 			self.cost = self.heuristic()
+			problem_file.close()
 
 		else:
 			self.actions 	= copy.copy(parent_state.actions)
