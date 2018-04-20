@@ -24,7 +24,7 @@
                 (waypoint ?to-waypoint)
                 (at ?robot ?from-waypoint)
                 (can-move ?from-waypoint ?to-waypoint)
-								(clear ?to-waypoint)
+								;(clear ?to-waypoint)
 								)
 
         :effect

@@ -4,7 +4,7 @@ import os
 from heapq import heappush
 from heapq import heappop
 import time
-
+import domain_rob_to_door as drtd
 
 def a_star_solve(initial_state):
 
@@ -35,14 +35,14 @@ def a_star_solve(initial_state):
 
 		if possible_solution.is_goal_state():
 			print '\n\n----------Solution found!---------------\n'
-			print 'The state is:\n',possible_solution.state
+			#print 'The state is:\n',possible_solution.state
 			print '\n\nThe goal was:'
 			for goal in possible_solution.goal: print goal
 			print '\nLength of solution: ',len(possible_solution.actions)
 			print '\nThe solution is: '
 			for action in possible_solution.actions:
 				print action
-			return
+			return possible_solution.actions
 
 
 		else:
@@ -81,7 +81,21 @@ def main():
 	debug = False
 	# debug = True
 
+	#Make robot to door problem
+	path = dir_path+'probs/robot_to_door/problem.pddl'
 
+	world_size = (4,4)
+	rob_pos = (0,0)
+	door_pos = (world_size[0]-1,world_size[1]-1)
+
+	dom24 = drtd.Domain_rob_to_door(world_size,rob_pos,door_pos,path=path)
+	dom24.print_room()
+
+
+	# # # # Shakey
+	problem_file_name = dir_path+'probs/robot_to_door/problem.pddl'
+	domain_file_name = dir_path+'probs/robot_to_door/domain.pddl'
+	# #
 
 	# satellite problem.
 	# domain_file_name = dir_path+'probs/satellite/domain.pddl'
@@ -99,8 +113,8 @@ def main():
 
 
 	# # # # Shakey
-	problem_file_name = dir_path+'probs/shakey/problem1.pddl'
-	domain_file_name = dir_path+'probs/shakey/domain.pddl'
+	# problem_file_name = dir_path+'probs/shakey/problem1.pddl'
+	# domain_file_name = dir_path+'probs/shakey/domain.pddl'
 	# #
 
  	# # # # # #Rover1
@@ -157,7 +171,13 @@ def main():
 			for goal in init_state.goal:
 				print goal
 
-		a_star_solve(init_state)
+		solution = a_star_solve(init_state)
+
+		dom24.print_room()
+		print '\n'
+		for action in solution:
+			dom24.do_action(action)
+
 
 		if profiling:
 			pr.disable()
@@ -179,7 +199,7 @@ def main():
 			print arg
 		print '------------------'
 
-	
+
 
 if __name__=='__main__':
 	main()
