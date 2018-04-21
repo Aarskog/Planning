@@ -24,11 +24,62 @@
                 (waypoint ?to-waypoint)
                 (at ?robot ?from-waypoint)
                 (can-move ?from-waypoint ?to-waypoint)
-								;(clear ?to-waypoint)
+								(clear ?to-waypoint)
 								)
 
         :effect
             (and
                 (at ?robot ?to-waypoint)
                 (not (at ?robot ?from-waypoint)))
-    ))
+    )
+
+		(:action pickup
+				:parameters
+						(?robot
+						 ?obstacle
+						 ?rob-pos
+						 ?obstacle-pos)
+
+				:precondition
+						(and
+								(robot ?robot)
+								(at ?robot ?rob-pos)
+								(at ?obstacle ?obstacle-pos)
+								(obstacle ?obstacle)
+								(can-move ?obstacle-pos ?rob-pos)
+								(moveable ?obstacle)
+								(handempty)
+								)
+
+				:effect
+						(and
+						(clear ?obstacle-pos)
+						(not (at ?obstacle ?obstacle-pos))
+								(not(handempty))
+								)
+		)
+
+		(:action put-down
+				:parameters
+						(?robot
+						 ?obstacle
+						 ?rob-pos
+						 ?put-pos)
+
+				:precondition
+						(and
+								(robot ?robot)
+								(at ?robot ?rob-pos)
+								(obstacle ?obstacle)
+								(can-move ?put-pos ?rob-pos)
+								(moveable ?obstacle)
+								(clear ?put-pos)
+								)
+
+				:effect
+						(and
+								(at ?obstacle ?put-pos)
+								(handempty)
+								(not (clear ?put-pos))
+								))
+		)

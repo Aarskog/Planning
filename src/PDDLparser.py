@@ -79,17 +79,18 @@ def main():
 	dir_path = dir_path[:-3]
 
 	debug = False
-	# debug = True
+	debug = True
 
 	#Make robot to door problem
 	path = dir_path+'probs/robot_to_door/problem.pddl'
 
-	world_size = (4,4)
+	world_size = (4,2)
 	rob_pos = (0,0)
 	door_pos = (world_size[0]-1,world_size[1]-1)
+	obstacles = [drtd.Obstacle((2,0)),drtd.Obstacle((2,1)),drtd.Obstacle((1,1)),drtd.Obstacle((1,0)),drtd.Obstacle((0,1)),drtd.Obstacle((3,0))]
 
-	dom24 = drtd.Domain_rob_to_door(world_size,rob_pos,door_pos,path=path)
-	dom24.print_room()
+	dom24 = drtd.Domain_rob_to_door(world_size,rob_pos,door_pos,path=path,obstacles=obstacles)
+	#dom24.print_room()
 
 
 	# # # # Shakey
@@ -173,6 +174,7 @@ def main():
 
 		solution = a_star_solve(init_state)
 
+		print '\nInitial state'
 		dom24.print_room()
 		print '\n'
 		for action in solution:

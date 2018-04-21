@@ -2,11 +2,13 @@ import numpy as np
 import os
 import math
 
-class Domain_rob_to_door():
+class Domain_rob_to_door:
 	def __init__(self,world_size,robot_start,door_pos,obstacles=None,path=None):
 		#Make room
 		self.room = [[" " for x in range(world_size[1])] for y in range(world_size[0])]
 		self.room_size = world_size
+		for obstacle in obstacles:
+			self.room[obstacle.pos[0]][obstacle.pos[1]] = 'O'
 
 		#Set robot position
 		self.room[robot_start[0]][robot_start[1]] = 'r'
@@ -21,6 +23,8 @@ class Domain_rob_to_door():
 
 
 		self.make_pddl_problem(robot_start,door_pos,obstacles,world_size,path)
+
+		self.robot = 'r'
 
 	def create_adjacency(self,world_size,waypoints):
 		adjacency_waypoints = np.zeros((world_size[0]*world_size[1],world_size[0]*world_size[1]))
@@ -70,6 +74,8 @@ class Domain_rob_to_door():
 
 		lines.append('(define (problem rtd)')
 		lines.append('(:domain robot-to-door)')
+
+		#------------------objects--------------------------------
 		lines.append('(:objects')
 		lines.append('robot')
 		lines.append('door')
@@ -77,8 +83,16 @@ class Domain_rob_to_door():
 		for waypoint in self.waypoints:
 			lines.append(waypoint)
 
-		lines.append(')')
+		obstacle_num = 1
+		for obstacle in obstacles:
+			lines.append('obstacle'+str(obstacle_num))
+			obstacle_num += 1
 
+		lines.append(')')
+		#------------------------------------------------------------
+
+
+		#-------------------Initial state ----------------------
 		lines.append('(:init')
 		lines.append('(robot robot)')
 		lines.append('(door door)')
@@ -88,16 +102,43 @@ class Domain_rob_to_door():
 
 		for waypoint in self.waypoints:
 			lines.append('(waypoint '+waypoint+')')
-			# lines.append('(clear '+ waypoint+')')
+			lines.append('(clear '+ waypoint+')')
 
 		for adjacency in adjacencies:
 			lines.append('(can-move '+adjacency[0]+' '+adjacency[1]+')')
+
+		obstacle_num = 1
+		for obstacle in obstacles:
+			obstacle_name = 'obstacle'+str(obstacle_num)
+			obstacle_pos = 'waypoint' + str(world_size[1]*obstacle.pos[0]+obstacle.pos[1])
+
+			lines.append('(obstacle ' + obstacle_name+')')
+
+			if obstacle.moveable:
+				lines.append('(moveable '+ obstacle_name+')')
+
+			lines.append('(at '+ obstacle_name + ' ' + obstacle_pos+')')
+			print 'clear '+obstacle_pos
+			lines.remove('(clear '+obstacle_pos+')')
+
+			obstacle_num += 1
+
+
 		lines.append(')')
 
+
+
+
+		#--------------------------------------------------------
+
+
+		#-----------------------Goal----------------------------------
 		lines.append('(:goal (and')
 		lines.append('(at robot waypoint'+str(world_size[1]*door_pos[0]+door_pos[1])+')')
+		lines.append('(handempty)')
 
 		lines.append(')))')
+		#-------------------------------------------------------------------
 
 		self.make_pddl_file(lines,path)
 
@@ -119,6 +160,11 @@ class Domain_rob_to_door():
 		return adjacencies
 
 	def do_action(self,action):
+		'''
+			Updates the visualization of the domain
+		'''
+
+
 
 		spl_act = action.split()
 		#print spl_act
@@ -128,15 +174,39 @@ class Domain_rob_to_door():
 			to_wp = spl_act[-1]
 			new_pos = (int(to_wp[8:])/self.room_size[1],int(to_wp[8:])%self.room_size[1])
 
-			self.room[self.robot_pos[0]][self.robot_pos[1]],self.room[new_pos[0]][new_pos[1]] = " ","r"
+			self.room[self.robot_pos[0]][self.robot_pos[1]] = " "
+			#self.room[new_pos[0]][new_pos[1]] = self.robot
 
 			self.robot_pos=new_pos
 
+		elif spl_act[0] == 'pickup':
+			self.robot = "rO"
+
+			obstacle_pos = spl_act[-1]
+			obstacle_pos = (int(obstacle_pos[8:])/self.room_size[1],int(obstacle_pos[8:])%self.room_size[1])
+
+			self.room[obstacle_pos[0]][obstacle_pos[1]] = " "
+			#self.room[self.robot_pos[0]][self.robot_pos[1]] = self.robot
+
+
+		elif spl_act[0] == 'put-down':
+			self.robot = "r"
+			obstacle_pos = spl_act[-1]
+			obstacle_pos = (int(obstacle_pos[8:])/self.room_size[1],int(obstacle_pos[8:])%self.room_size[1])
+
+			self.room[obstacle_pos[0]][obstacle_pos[1]] = "O"
+
+
+		self.room[self.robot_pos[0]][self.robot_pos[1]] = self.robot
+		print action
 		self.print_room()
-			print '\n'
+		print '\n'
 			#print to_wp[8:],int(to_wp[8:])/self.room_size[1],int(to_wp[8:])%self.room_size[1]
 
-
+class Obstacle:
+	def __init__(self,pos,moveable=True):
+		self.pos = pos
+		self.moveable = moveable
 
 #
 # def main():

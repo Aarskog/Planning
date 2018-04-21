@@ -48,6 +48,8 @@ class State:
 			for item in delete_list:
 				self.state.remove(item.upper())
 
+
+
 		self.state = sorted(self.state)
 
 	def set_state_cost(self):
@@ -55,8 +57,8 @@ class State:
 
 	def heuristic(self):
 		#self.estimated_dist_to_goal = self.hsp_heuristic() + self.missing_goal_states_heuristic()
-		self.estimated_dist_to_goal = self.missing_goal_states_heuristic()
-		#self.estimated_dist_to_goal = self.hsp_heuristic()
+		#self.estimated_dist_to_goal = self.missing_goal_states_heuristic()
+		self.estimated_dist_to_goal = self.hsp_heuristic()
 		return 1*self.estimated_dist_to_goal
 
 	def missing_goal_states_heuristic(self):
