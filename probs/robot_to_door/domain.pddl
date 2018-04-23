@@ -9,6 +9,7 @@
 			(moveable ?obj)
 			(can-move ?from ?to)
 			(clear ?waypoint)
+			(holding ?robot ?obj)
     )
 
     (:action move
@@ -54,6 +55,7 @@
 				:effect
 						(and
 						(clear ?obstacle-pos)
+						(holding ?robot ?obstacle)
 						(not (at ?obstacle ?obstacle-pos))
 								(not(handempty))
 								)
@@ -74,6 +76,7 @@
 								(can-move ?put-pos ?rob-pos)
 								(moveable ?obstacle)
 								(clear ?put-pos)
+								(holding ?robot ?obstacle)
 								)
 
 				:effect
@@ -81,5 +84,6 @@
 								(at ?obstacle ?put-pos)
 								(handempty)
 								(not (clear ?put-pos))
+								(not (holding ?robot ?obstacle))
 								))
 		)

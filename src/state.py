@@ -52,14 +52,31 @@ class State:
 
 		self.state = sorted(self.state)
 
-	def set_state_cost(self):
-		self.cost =  self.heuristic() + 0.01*self.depth
+	def set_state_cost(self,solver=None):
+		if solver:
+			solver = solver.lower()
+
+		if solver=='bfs' or solver == "breadth first search":
+			self.cost = self.depth
+
+		elif solver=='dfs' or solver == "depth first search":
+			self.cost = -self.depth
+
+		elif solver=='missing state':
+			self.estimated_dist_to_goal = self.missing_goal_states_heuristic()
+			self.cost = self.estimated_dist_to_goal + 0.01 * self.depth
+		else:
+			self.estimated_dist_to_goal = self.hsp_heuristic()
+			self.cost = self.estimated_dist_to_goal + 0.01 * self.depth
+
+
+		#self.cost =  self.heuristic() - 0.01*self.depth
 
 	def heuristic(self):
 		#self.estimated_dist_to_goal = self.hsp_heuristic() + self.missing_goal_states_heuristic()
 		#self.estimated_dist_to_goal = self.missing_goal_states_heuristic()
-		self.estimated_dist_to_goal = self.hsp_heuristic()
-		return 1*self.estimated_dist_to_goal
+		#self.estimated_dist_to_goal = self.hsp_heuristic()
+		return 0# 1*self.estimated_dist_to_goal
 
 	def missing_goal_states_heuristic(self):
 		dist_to_goal = 0

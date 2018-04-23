@@ -1,30 +1,38 @@
 import numpy as np
 import os
 import math
+import sys
 
 class Domain_rob_to_door:
 	def __init__(self,world_size,robot_start,door_pos,obstacles=None,path=None):
 		#Make room
-		self.room = [[" " for x in range(world_size[1])] for y in range(world_size[0])]
+		self.room = [["   " for x in range(world_size[1])] for y in range(world_size[0])]
 		self.room_size = world_size
+		self.obstacles={}
 		for obstacle in obstacles:
-			self.room[obstacle.pos[0]][obstacle.pos[1]] = 'O'
+			self.room[obstacle.pos[0]][obstacle.pos[1]] = obstacle.name
+
+			self.obstacles[(obstacle.pos[0],obstacle.pos[1])] = obstacle
+
+		self.robot = Robot(robot_start)
 
 		#Set robot position
-		self.room[robot_start[0]][robot_start[1]] = 'r'
-		self.robot_pos = robot_start
+		self.room[robot_start[0]][robot_start[1]] = self.robot.name
+		self.robot.pos = robot_start
 
 		#Set door position
-		self.room[door_pos[0]][door_pos[1]] = 'D'
+		self.room[door_pos[0]][door_pos[1]] = ' D '
+		self.door_pos = door_pos
 
 		#Make each tile to waypoints and the adjacency matrix
 		self.waypoints = []
 		self.adjacency_waypoints = self.create_adjacency(world_size,self.waypoints)
 
 
+		self.path = path
 		self.make_pddl_problem(robot_start,door_pos,obstacles,world_size,path)
 
-		self.robot = 'r'
+
 
 	def create_adjacency(self,world_size,waypoints):
 		adjacency_waypoints = np.zeros((world_size[0]*world_size[1],world_size[0]*world_size[1]))
@@ -62,6 +70,7 @@ class Domain_rob_to_door:
 	def print_room(self):
 		for tiles in self.get_room():
 			print tiles
+			#print repr([x.encode(sys.stdout.encoding) for x in tiles]).decode('string-escape')
 
 	def get_room(self):
 		return self.room
@@ -118,7 +127,7 @@ class Domain_rob_to_door:
 				lines.append('(moveable '+ obstacle_name+')')
 
 			lines.append('(at '+ obstacle_name + ' ' + obstacle_pos+')')
-			print 'clear '+obstacle_pos
+			#print 'clear '+obstacle_pos
 			lines.remove('(clear '+obstacle_pos+')')
 
 			obstacle_num += 1
@@ -163,7 +172,7 @@ class Domain_rob_to_door:
 		'''
 			Updates the visualization of the domain
 		'''
-
+		success = True
 
 
 		spl_act = action.split()
@@ -174,40 +183,102 @@ class Domain_rob_to_door:
 			to_wp = spl_act[-1]
 			new_pos = (int(to_wp[8:])/self.room_size[1],int(to_wp[8:])%self.room_size[1])
 
-			self.room[self.robot_pos[0]][self.robot_pos[1]] = " "
+			self.room[self.robot.pos[0]][self.robot.pos[1]] = "   "
 			#self.room[new_pos[0]][new_pos[1]] = self.robot
 
-			self.robot_pos=new_pos
+			self.robot.pos=new_pos
 
 		elif spl_act[0] == 'pickup':
-			self.robot = "rO"
+
+
+			self.robot.name = " rO"
 
 			obstacle_pos = spl_act[-1]
 			obstacle_pos = (int(obstacle_pos[8:])/self.room_size[1],int(obstacle_pos[8:])%self.room_size[1])
+			obstacle = self.obstacles[obstacle_pos]
+			removekey(self.obstacles,obstacle_pos)
 
-			self.room[obstacle_pos[0]][obstacle_pos[1]] = " "
-			#self.room[self.robot_pos[0]][self.robot_pos[1]] = self.robot
+
+			self.room[obstacle_pos[0]][obstacle_pos[1]] = "   "
+			#self.room[self.robot.pos[0]][self.robot.pos[1]] = self.robot
+
+			obstacle.discovered = True
+
+			obstacle.update_obstacle()
+			if obstacle.moveable:
+				self.robot.holding = obstacle
+			else:
+				#obstacle.name = ' | '
+				self.room[obstacle_pos[0]][obstacle_pos[1]] = obstacle.name
+				self.make_pddl_problem( self.robot.pos,self.door_pos,self.obstacles,self.room_size,self.path)
+
+				success = False
 
 
 		elif spl_act[0] == 'put-down':
-			self.robot = "r"
+			self.robot.name = " r "
 			obstacle_pos = spl_act[-1]
 			obstacle_pos = (int(obstacle_pos[8:])/self.room_size[1],int(obstacle_pos[8:])%self.room_size[1])
+			self.obstacles[obstacle_pos] = self.robot.holding
 
-			self.room[obstacle_pos[0]][obstacle_pos[1]] = "O"
+			self.room[obstacle_pos[0]][obstacle_pos[1]] = " O "
 
+			self.robot.holding = None
 
-		self.room[self.robot_pos[0]][self.robot_pos[1]] = self.robot
+		self.room[self.robot.pos[0]][self.robot.pos[1]] = self.robot.name
 		print action
 		self.print_room()
 		print '\n'
+		return success
 			#print to_wp[8:],int(to_wp[8:])/self.room_size[1],int(to_wp[8:])%self.room_size[1]
 
 class Obstacle:
 	def __init__(self,pos,moveable=True):
 		self.pos = pos
 		self.moveable = moveable
+		self.discovered = False
+		if moveable:
+			self.name = ' O '
+		else:
+			self.name = ' | '
 
+	def update_obstacle(self):
+		one=1
+
+
+class Obstacle_hidden:
+	def __init__(self,pos,moveable=True):
+		self.pos = pos
+		self.moveable = True
+		self.name = ' O '
+		self.moveable_after_discovery = moveable
+		self.discovered = False
+
+	def update_obstacle(self):
+		if self.discovered and not self.moveable_after_discovery:
+			self.name = ' | '
+			self.moveable = False
+
+
+		# if moveable:
+		# 	self.name = ' O '
+		# else:
+		# 	self.name = ' | '#u"\u2588"
+
+
+
+
+class Robot:
+	def __init__(self,pos):
+		self.name=' r '
+
+		#Holding object
+		self.holding = None
+
+def removekey(d, key):
+    r = dict(d)
+    del r[key]
+    return r
 #
 # def main():
 # 	dir_path = os.path.dirname(os.path.realpath(__file__))

@@ -6,7 +6,7 @@ from heapq import heappop
 import time
 import domain_rob_to_door as drtd
 
-def a_star_solve(initial_state):
+def solve(initial_state,solver=None):
 
 	heap = []
 
@@ -53,7 +53,7 @@ def a_star_solve(initial_state):
 
 				#check if the state already has been visited using hash table
 				if not tuple(new_state.state) in visited_states:
-					new_state.set_state_cost()
+					new_state.set_state_cost(solver)
 					#Add the new state to visited states
 					visited_states[tuple(new_state.state)] = True
 					new_states_inserted = new_states_inserted + 1
@@ -79,19 +79,24 @@ def main():
 	dir_path = dir_path[:-3]
 
 	debug = False
-	debug = True
+	# debug = True
 
 	#Make robot to door problem
 	path = dir_path+'probs/robot_to_door/problem.pddl'
 
-	world_size = (4,2)
+	world_size = (4,5)
 	rob_pos = (0,0)
 	door_pos = (world_size[0]-1,world_size[1]-1)
-	obstacles = [drtd.Obstacle((2,0)),drtd.Obstacle((2,1)),drtd.Obstacle((1,1)),drtd.Obstacle((1,0)),drtd.Obstacle((0,1)),drtd.Obstacle((3,0))]
+	obstacles = [drtd.Obstacle((2,0)),drtd.Obstacle((1,0)),drtd.Obstacle((3,0)),\
+	drtd.Obstacle_hidden((0,1),moveable= False),drtd.Obstacle((1,1),False),drtd.Obstacle((2,1),False),\
+	drtd.Obstacle((0,2)),drtd.Obstacle((1,2)),drtd.Obstacle((2,2)),drtd.Obstacle((3,2)),
+	drtd.Obstacle((1,3),False),drtd.Obstacle((2,3),False),drtd.Obstacle((3,3),False)]
 
 	dom24 = drtd.Domain_rob_to_door(world_size,rob_pos,door_pos,path=path,obstacles=obstacles)
 	#dom24.print_room()
-
+	solver = 'BFS'
+	# solver = None
+	#solver = 'missing state'
 
 	# # # # Shakey
 	problem_file_name = dir_path+'probs/robot_to_door/problem.pddl'
@@ -172,13 +177,18 @@ def main():
 			for goal in init_state.goal:
 				print goal
 
-		solution = a_star_solve(init_state)
+		#Solve the problem
+		solution = solve(init_state,solver)
 
+
+		#execute plan
 		print '\nInitial state'
 		dom24.print_room()
 		print '\n'
 		for action in solution:
-			dom24.do_action(action)
+			if not dom24.do_action(action):
+				solution = solve(init_state,solver)
+
 
 
 		if profiling:
