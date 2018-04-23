@@ -13,6 +13,7 @@ class Domain_rob_to_door:
 			self.room[obstacle.pos[0]][obstacle.pos[1]] = obstacle.name
 
 			self.obstacles[(obstacle.pos[0],obstacle.pos[1])] = obstacle
+		self.obstacles_array = obstacles
 
 		self.robot = Robot(robot_start)
 
@@ -106,7 +107,7 @@ class Domain_rob_to_door:
 		lines.append('(robot robot)')
 		lines.append('(door door)')
 		lines.append('(handempty)')
-		lines.append('(at robot waypoint' + str(world_size[1]*robot_start[0]+robot_start[1]) +  ')')
+		lines.append('(at robot waypoint' + str(world_size[1]*self.robot.pos[0]+self.robot.pos[1]) +  ')')
 
 
 		for waypoint in self.waypoints:
@@ -119,6 +120,7 @@ class Domain_rob_to_door:
 		obstacle_num = 1
 		for obstacle in obstacles:
 			obstacle_name = 'obstacle'+str(obstacle_num)
+
 			obstacle_pos = 'waypoint' + str(world_size[1]*obstacle.pos[0]+obstacle.pos[1])
 
 			lines.append('(obstacle ' + obstacle_name+')')
@@ -174,7 +176,6 @@ class Domain_rob_to_door:
 		'''
 		success = True
 
-
 		spl_act = action.split()
 		#print spl_act
 		if spl_act[0] == 'move':
@@ -188,15 +189,18 @@ class Domain_rob_to_door:
 
 			self.robot.pos=new_pos
 
+
+
+
 		elif spl_act[0] == 'pickup':
 
 
-			self.robot.name = " rO"
+
 
 			obstacle_pos = spl_act[-1]
 			obstacle_pos = (int(obstacle_pos[8:])/self.room_size[1],int(obstacle_pos[8:])%self.room_size[1])
 			obstacle = self.obstacles[obstacle_pos]
-			removekey(self.obstacles,obstacle_pos)
+			#removekey(self.obstacles,obstacle_pos)
 
 
 			self.room[obstacle_pos[0]][obstacle_pos[1]] = "   "
@@ -207,12 +211,18 @@ class Domain_rob_to_door:
 			obstacle.update_obstacle()
 			if obstacle.moveable:
 				self.robot.holding = obstacle
+				self.robot.name = " rO"
+				removekey(self.obstacles,obstacle_pos)
 			else:
-				#obstacle.name = ' | '
+				print 'Can not pick up. Replan'
 				self.room[obstacle_pos[0]][obstacle_pos[1]] = obstacle.name
-				self.make_pddl_problem( self.robot.pos,self.door_pos,self.obstacles,self.room_size,self.path)
+				self.make_pddl_problem( self.robot.pos,self.door_pos,self.obstacles_array,self.room_size,self.path)
 
 				success = False
+
+
+
+
 
 
 		elif spl_act[0] == 'put-down':
@@ -220,6 +230,7 @@ class Domain_rob_to_door:
 			obstacle_pos = spl_act[-1]
 			obstacle_pos = (int(obstacle_pos[8:])/self.room_size[1],int(obstacle_pos[8:])%self.room_size[1])
 			self.obstacles[obstacle_pos] = self.robot.holding
+			self.robot.holding.pos = obstacle_pos
 
 			self.room[obstacle_pos[0]][obstacle_pos[1]] = " O "
 
@@ -271,9 +282,12 @@ class Obstacle_hidden:
 class Robot:
 	def __init__(self,pos):
 		self.name=' r '
+		self.pos = pos
 
 		#Holding object
 		self.holding = None
+
+
 
 def removekey(d, key):
     r = dict(d)

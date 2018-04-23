@@ -6,7 +6,7 @@ from heapq import heappop
 import time
 import domain_rob_to_door as drtd
 
-def solve(initial_state,solver=None):
+def solve(initial_state,solver=None,print_progress=True):
 
 	heap = []
 
@@ -29,7 +29,8 @@ def solve(initial_state,solver=None):
 		if possible_solution.depth > deepest:
 			deepest = possible_solution.depth
 
-		print 'Visited:',i,' len queue:',len(heap),' depth:',possible_solution.depth,deepest,\
+		if print_progress:
+			print 'Visited:',i,' len queue:',len(heap),' depth:',possible_solution.depth,deepest,\
 		' New states:',new_states_inserted,' State cost: ',possible_solution.cost,\
 		' Dist goal: ',possible_solution.estimated_dist_to_goal,lowest_dist#,len(possible_solution.state)
 
@@ -42,6 +43,7 @@ def solve(initial_state,solver=None):
 			print '\nThe solution is: '
 			for action in possible_solution.actions:
 				print action
+			print '\n\n'
 			return possible_solution.actions
 
 
@@ -88,14 +90,14 @@ def main():
 	rob_pos = (0,0)
 	door_pos = (world_size[0]-1,world_size[1]-1)
 	obstacles = [drtd.Obstacle((2,0)),drtd.Obstacle((1,0)),drtd.Obstacle((3,0)),\
-	drtd.Obstacle_hidden((0,1),moveable= False),drtd.Obstacle((1,1),False),drtd.Obstacle((2,1),False),\
+	drtd.Obstacle_hidden((0,1),False),drtd.Obstacle_hidden((1,1),False),drtd.Obstacle_hidden((2,1),False),\
 	drtd.Obstacle((0,2)),drtd.Obstacle((1,2)),drtd.Obstacle((2,2)),drtd.Obstacle((3,2)),
-	drtd.Obstacle((1,3),False),drtd.Obstacle((2,3),False),drtd.Obstacle((3,3),False)]
+	drtd.Obstacle_hidden((1,3),False),drtd.Obstacle_hidden((2,3),False),drtd.Obstacle_hidden((3,3),False)]
 
 	dom24 = drtd.Domain_rob_to_door(world_size,rob_pos,door_pos,path=path,obstacles=obstacles)
 	#dom24.print_room()
-	solver = 'BFS'
-	# solver = None
+	solver = 'bFS'
+	solver = None
 	#solver = 'missing state'
 
 	# # # # Shakey
@@ -181,13 +183,19 @@ def main():
 		solution = solve(init_state,solver)
 
 
-		#execute plan
+		#Execute plan
 		print '\nInitial state'
 		dom24.print_room()
 		print '\n'
-		for action in solution:
+
+		#i = 0
+		while solution:
+			action = solution.pop(0)
 			if not dom24.do_action(action):
-				solution = solve(init_state,solver)
+				domain_file = open(domain_file_name,'r')
+				problem_file = open(problem_file_name,'r')
+				init_state = st.State(domainclass = domain,problem_file=problem_file)
+				solution = solve(init_state,solver,print_progress=False)
 
 
 
