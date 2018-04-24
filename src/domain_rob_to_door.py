@@ -33,8 +33,6 @@ class Domain_rob_to_door:
 		self.path = path
 		self.make_pddl_problem(robot_start,door_pos,obstacles,world_size,path)
 
-
-
 	def create_adjacency(self,world_size,waypoints):
 		adjacency_waypoints = np.zeros((world_size[0]*world_size[1],world_size[0]*world_size[1]))
 		k = 0
@@ -194,9 +192,6 @@ class Domain_rob_to_door:
 
 		elif spl_act[0] == 'pickup':
 
-
-
-
 			obstacle_pos = spl_act[-1]
 			obstacle_pos = (int(obstacle_pos[8:])/self.room_size[1],int(obstacle_pos[8:])%self.room_size[1])
 			obstacle = self.obstacles[obstacle_pos]
@@ -214,15 +209,11 @@ class Domain_rob_to_door:
 				self.robot.name = " rO"
 				removekey(self.obstacles,obstacle_pos)
 			else:
-				print 'Can not pick up. Replan'
+
 				self.room[obstacle_pos[0]][obstacle_pos[1]] = obstacle.name
 				self.make_pddl_problem( self.robot.pos,self.door_pos,self.obstacles_array,self.room_size,self.path)
 
 				success = False
-
-
-
-
 
 
 		elif spl_act[0] == 'put-down':
@@ -239,9 +230,10 @@ class Domain_rob_to_door:
 		self.room[self.robot.pos[0]][self.robot.pos[1]] = self.robot.name
 		print action
 		self.print_room()
-		print '\n'
+		#print '\n'
 		return success
 			#print to_wp[8:],int(to_wp[8:])/self.room_size[1],int(to_wp[8:])%self.room_size[1]
+
 
 class Obstacle:
 	def __init__(self,pos,moveable=True):
@@ -257,13 +249,16 @@ class Obstacle:
 		one=1
 
 
-class Obstacle_hidden:
+class Obstacle_hidden(Obstacle):
 	def __init__(self,pos,moveable=True):
-		self.pos = pos
-		self.moveable = True
+
+		Obstacle.__init__(self,pos,moveable=True)
+
+		#self.pos = pos
+		#self.moveable = True
 		self.name = ' O '
 		self.moveable_after_discovery = moveable
-		self.discovered = False
+		#self.discovered = False
 
 	def update_obstacle(self):
 		if self.discovered and not self.moveable_after_discovery:
@@ -277,8 +272,6 @@ class Obstacle_hidden:
 		# 	self.name = ' | '#u"\u2588"
 
 
-
-
 class Robot:
 	def __init__(self,pos):
 		self.name=' r '
@@ -288,11 +281,14 @@ class Robot:
 		self.holding = None
 
 
-
 def removekey(d, key):
     r = dict(d)
     del r[key]
     return r
+
+def one_d_2_2d(d1):
+	'''1D coord to 2D coord'''
+
 #
 # def main():
 # 	dir_path = os.path.dirname(os.path.realpath(__file__))

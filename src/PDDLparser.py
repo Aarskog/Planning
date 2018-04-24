@@ -35,15 +35,16 @@ def solve(initial_state,solver=None,print_progress=True):
 		' Dist goal: ',possible_solution.estimated_dist_to_goal,lowest_dist#,len(possible_solution.state)
 
 		if possible_solution.is_goal_state():
-			print '\n\n----------Solution found!---------------\n'
-			#print 'The state is:\n',possible_solution.state
-			print '\n\nThe goal was:'
-			for goal in possible_solution.goal: print goal
-			print '\nLength of solution: ',len(possible_solution.actions)
-			print '\nThe solution is: '
-			for action in possible_solution.actions:
-				print action
-			print '\n\n'
+			if print_progress:
+				print '\n\n----------Solution found!---------------\n'
+				#print 'The state is:\n',possible_solution.state
+				print '\n\nThe goal was:'
+				for goal in possible_solution.goal: print goal
+				print '\nLength of solution: ',len(possible_solution.actions)
+				print '\nThe solution is: '
+				for action in possible_solution.actions:
+					print action
+				print '\n\n'
 			return possible_solution.actions
 
 
@@ -90,15 +91,15 @@ def main():
 	rob_pos = (0,0)
 	door_pos = (world_size[0]-1,world_size[1]-1)
 	obstacles = [drtd.Obstacle((2,0)),drtd.Obstacle((1,0)),drtd.Obstacle((3,0)),\
-	drtd.Obstacle_hidden((0,1),False),drtd.Obstacle_hidden((1,1),False),drtd.Obstacle_hidden((2,1),False),\
+	drtd.Obstacle_hidden((0,1),False),drtd.Obstacle_hidden((1,1),False),drtd.Obstacle_hidden((2,1),False),drtd.Obstacle((3,1)),\
 	drtd.Obstacle((0,2)),drtd.Obstacle((1,2)),drtd.Obstacle((2,2)),drtd.Obstacle((3,2)),
-	drtd.Obstacle_hidden((1,3),False),drtd.Obstacle_hidden((2,3),False),drtd.Obstacle_hidden((3,3),False)]
+	drtd.Obstacle((0,3)),drtd.Obstacle_hidden((1,3),False),drtd.Obstacle_hidden((2,3),False),drtd.Obstacle_hidden((3,3),False)]
 
 	dom24 = drtd.Domain_rob_to_door(world_size,rob_pos,door_pos,path=path,obstacles=obstacles)
 	#dom24.print_room()
-	solver = 'bFS'
-	solver = None
-	#solver = 'missing state'
+	# solver = 'bFS'
+	# solver = None
+	solver = 'missing state'
 
 	# # # # Shakey
 	problem_file_name = dir_path+'probs/robot_to_door/problem.pddl'
@@ -188,14 +189,20 @@ def main():
 		dom24.print_room()
 		print '\n'
 
-		#i = 0
+		i = 0
 		while solution:
 			action = solution.pop(0)
+			print '\n'
+
 			if not dom24.do_action(action):
 				domain_file = open(domain_file_name,'r')
 				problem_file = open(problem_file_name,'r')
 				init_state = st.State(domainclass = domain,problem_file=problem_file)
+				print 'Can not pick up. Replanning'
 				solution = solve(init_state,solver,print_progress=False)
+				#i = i - 1
+			i = i + 1
+		print i,' actions attempted'
 
 
 

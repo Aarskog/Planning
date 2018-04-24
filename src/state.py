@@ -245,6 +245,7 @@ class State:
 				# print goal==state,goal,state
 
 	def is_goal_state_external(self,state):
+		''' Same as is_goal_state() with one more parameter '''
 		return self.get_number_of_completed_subgoals(state)==len(self.goal)
 		#result =  all(elem in self.goal  for elem in state)
 		# found_goal = False
