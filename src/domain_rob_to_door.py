@@ -19,7 +19,7 @@ class Domain_rob_to_door:
 
 		#Set robot position
 		self.room[robot_start[0]][robot_start[1]] = self.robot.name
-		self.robot.pos = robot_start
+
 
 		#Set door position
 		self.room[door_pos[0]][door_pos[1]] = ' D '
@@ -246,6 +246,10 @@ class Obstacle:
 			self.name = ' | '
 
 	def update_obstacle(self):
+		'''
+		Does nothing, but it is called because it is called on both obstacle
+		classes
+		'''
 		one=1
 
 
@@ -266,12 +270,6 @@ class Obstacle_hidden(Obstacle):
 			self.moveable = False
 
 
-		# if moveable:
-		# 	self.name = ' O '
-		# else:
-		# 	self.name = ' | '#u"\u2588"
-
-
 class Robot:
 	def __init__(self,pos):
 		self.name=' r '
@@ -285,23 +283,3 @@ def removekey(d, key):
     r = dict(d)
     del r[key]
     return r
-
-def one_d_2_2d(d1):
-	'''1D coord to 2D coord'''
-
-#
-# def main():
-# 	dir_path = os.path.dirname(os.path.realpath(__file__))
-# 	dir_path = dir_path[:-3]
-#
-# 	path = dir_path+'probs/robot_to_door/problem.pddl'
-#
-# 	world_size = (7,7)
-# 	rob_pos = (0,0)
-# 	door_pos = (6,6)
-#
-# 	dom24 = Domain_rob_to_door(world_size,rob_pos,door_pos,path=path)
-# 	dom24.print_room()
-#
-# if __name__=='__main__':
-# 	main()
