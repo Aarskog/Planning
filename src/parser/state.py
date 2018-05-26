@@ -22,7 +22,6 @@ class State:
 		self.estimated_dist_to_goal = 0
 		self.parent 			= parent_state
 
-		'''If initial state'''
 		if not parent_state:
 			self.parse(problem_file)
 			self.cost = 0
@@ -43,7 +42,7 @@ class State:
 				if item not in self.state:
 					self.state.append(item)
 
-			#self.objects 	= parent_state.objects
+			self.objects 	= parent_state.objects
 
 			delete_list 	= action.get_deletelist(action_parameters)
 			for item in delete_list:
@@ -81,16 +80,20 @@ class State:
 
 	def missing_goal_states_heuristic(self):
 		dist_to_goal = 0
-
+		#print 'p ness'
+		# print len(self.state)
 		for goals in self.goal:
 			found_goal = False
 			for state in self.state:
+				#print goals==state
 				if goals==state:
 					found_goal = True
 					break
 			if not found_goal:
 				dist_to_goal += 1
-
+				# print goals
+		# print dist_to_goal
+		#self.estimated_dist_to_goal = dist_to_goal
 		return dist_to_goal
 
 	def hsp_heuristic(self):
@@ -122,20 +125,25 @@ class State:
 					completed_subgoals = self.get_number_of_completed_subgoals(state)
 					cost = cost + depth*(completed_subgoals-completed_subgoals_prev)
 
+
+			#print cost,len(state)#,state
 			if	previous_lenght_state == len(state):
 				return depth*len(self.state)*10
 
+				#raise ValueError('Error: Problem not solvable')
 			previous_lenght_state = len(state)
 
 			depth = depth + 1
 			completed_subgoals = self.get_number_of_completed_subgoals(state)
-
-		return cost
+		#print cost,len(state)
+		#self.estimated_dist_to_goal = cost# + self.heuristic()
+		return cost# + self.heuristic())
 
 	def create_child_states(self):
 		for action in self.domainclass.actions:
 			return_parameters = action.return_possible(self.state)
 			for parameters in return_parameters:
+				#if action.is_possible(self.state,parameters):
 				self.child_states.append(State(domainclass=self.domainclass,parent_state=self,action = action,action_parameters=parameters))
 
 	def get_child_states(self):
@@ -202,6 +210,10 @@ class State:
 					break
 				i=i+1
 
+
+
+		# print self.state
+
 	def set_goal_state(self,goal):
 		goal =  goal[7:]
 		if remove_white(goal.lower()[2:6])=='and':
@@ -217,17 +229,41 @@ class State:
 
 	def is_goal_state(self):
 		return self.get_number_of_completed_subgoals(self.state)==len(self.goal)
+		# found_goal = False
+		#
+		# for goals in self.goal:
+		# 	found_goal = False
+		# 	for state in self.state:
+		# 		if goals==state:
+		# 			found_goal = True
+		# 			break
+		# 	if not found_goal:
+		# 		return False
+		#
+
+		# return True
+				# print goal==state,goal,state
 
 	def is_goal_state_external(self,state):
 		''' Same as is_goal_state() with one more parameter '''
 		return self.get_number_of_completed_subgoals(state)==len(self.goal)
+		#result =  all(elem in self.goal  for elem in state)
+		# found_goal = False
+		# for goals in self.goal:
+		# 	found_goal = False
+		# 	for states in state:
+		# 		if goals==states:
+		# 			found_goal = True
+		# 			break
+		# 	if not found_goal:
+		# 		return False
+		# return result
 
 	def get_number_of_completed_subgoals(self,states):
 		compl = 0
 		for goal in self.goal:
 			if goal in states:
 				compl = compl + 1
-
 		return compl
 
 
@@ -246,3 +282,11 @@ def remove_white(arr):
 	arr = arr.replace(' ','')
 	arr = arr.replace('	','')
 	return arr
+
+# def items_in_list_are_unique(items):
+# 	item_check_list = {}
+# 	for item in items:
+# 		if item in item_check_list:
+# 			return False
+# 		item_check_list[item]=True
+# 	return True
