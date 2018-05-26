@@ -18,7 +18,7 @@ def main():
 		Switch between solving methods: BFS,DFS, Weitgthed A* with missing subgoals heuristic
 		or relaxed problem heuristic
 
-		The weighted A* is made as f(s) = h(s) + w*g(s), such that is w = 0 it is
+		The weighted A* is made as f(s) = h(s) + w*g(s), such that if w = 0 it is
 		best first search
 	'''
 	# solver = 'bfs'
@@ -29,7 +29,7 @@ def main():
 
 
 	'''
-	Chosse whether to solve the robot_to_door replanning problem or chosse a problem
+	Choose whether to solve the robot_to_door replanning problem or choose a problem
 	from the ICAPS competition
 	'''
 	rob2door = False
