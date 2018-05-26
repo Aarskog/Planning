@@ -119,6 +119,3 @@ def main():
 
 if __name__=='__main__':
 	main()
-
-#https://github.com/primaryobjects/strips/tree/master/strips
-#Fix naar action bare har en effect. Det blir rart
