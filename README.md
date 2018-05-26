@@ -26,4 +26,4 @@ To solve a problem:
 3. Choose solving method
 4. run *src/main.py*
 
-There are already some exapmles in the main file to use and look at if something is unclear.
+There are already some examples in the main file to use and look at if something is unclear.
