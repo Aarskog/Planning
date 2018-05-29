@@ -21,7 +21,7 @@ Only Python standard libraries have been used, so it should not be necessary to 
 
 ## Use
 To solve a problem:
-1. open *src/main.py"
+1. open *src/main.py*
 2. Define the paths to the *domain.pddl* and *problem.pddl*. 
 3. Choose solving method
 4. run *src/main.py*
